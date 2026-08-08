@@ -557,6 +557,7 @@
         const firebaseConfig = {
             apiKey: "AIzaSyB5RUu_VBc8xIQRLzGEneVJebvFHbxpjR4",
             authDomain: "chheanglengquotation.firebaseapp.com",
+            databaseURL: "https://chheanglengquotation-default-rtdb.firebaseio.com",
             projectId: "chheanglengquotation",
             storageBucket: "chheanglengquotation.firebasestorage.app",
             messagingSenderId: "1090092995133",
@@ -632,6 +633,7 @@
         function logoutUser() {
             if(confirm("តើអ្នកពិតជាចង់ចាកចេញពីប្រព័ន្ធមែនទេ?")) {
                 addLog("បានចាកចេញពីប្រព័ន្ធ (Logout)", "");
+                db.ref('chheangleng_db').off();
                 auth.signOut();
             }
         }
@@ -773,12 +775,29 @@
             let pass = document.getElementById('newRolePass').value.trim();
             let role = document.getElementById('newRoleType').value;
             if(!email || !pass || pass.length < 6) return alert("សូមបញ្ចូល Email និងលេខសម្ងាត់ឲ្យបានត្រឹមត្រូវ (យ៉ាងតិច ៦ខ្ទង់)!");
-            let key = email.replace(/\./g, ',');
-            db.ref(`chheangleng_db/userRoles/${key}`).set(role);
-            addLog("ផ្តល់សិទ្ធិគណនី", `Email: ${email}, សិទ្ធិ: ${role}`);
-            document.getElementById('newRoleEmail').value = '';
-            document.getElementById('newRolePass').value = '';
-            alert("✅ បានកំណត់សិទ្ធិគណនីជោគជ័យ!");
+
+            // បង្កើត App ទី២ បណ្តោះអាសន្ន ដើម្បីកុំឲ្យពេលបង្កើតគណនីថ្មី វាលោត Logout គណនី Admin
+            const secondaryApp = firebase.initializeApp(firebaseConfig, "SecondaryApp");
+
+            secondaryApp.auth().createUserWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    // បន្ទាប់ពីបង្កើតជោគជ័យ ត្រូវ Sign out គណនីថ្មីនោះវិញភ្លាម ដើម្បីរក្សា Admin នៅដដែល
+                    secondaryApp.auth().signOut();
+                    secondaryApp.delete(); // លុប App បណ្តោះអាសន្នចោលវិញ
+
+                    // រក្សាទុកសិទ្ធិ (Role) ចូលទៅក្នុង Database
+                    let key = email.replace(/\./g, ',');
+                    db.ref(`chheangleng_db/userRoles/${key}`).set(role);
+                    addLog("ផ្តល់សិទ្ធិគណនី", `Email: ${email}, សិទ្ធិ: ${role}`);
+                    
+                    document.getElementById('newRoleEmail').value = '';
+                    document.getElementById('newRolePass').value = '';
+                    alert("✅ បានបង្កើតគណនី និងកំណត់សិទ្ធិជោគជ័យ! លោកអ្នកអាចយកគណនីថ្មីនេះទៅ Login បានហើយ។");
+                })
+                .catch((error) => {
+                    alert("❌ បញ្ហាក្នុងការបង្កើតគណនី: " + error.message);
+                    secondaryApp.delete();
+                });
         }
 
         function removeRole(key) {
