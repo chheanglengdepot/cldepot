@@ -21,17 +21,18 @@
 
     <style>
         body { font-family: 'Khmer OS Battambang', 'Arial', sans-serif; margin: 0; background-color: #f4f6f9; }
-        .nav { background: #343a40; padding: 15px; text-align: center; display: flex; justify-content: center; flex-wrap: wrap; gap: 5px;}
+        .nav { background: #343a40; padding: 15px; text-align: center; display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 5px; align-items: center;}
         .nav button { background: #495057; color: white; border: none; padding: 10px 15px; cursor: pointer; font-size: 15px; border-radius: 4px; }
         .nav button:hover, .nav button.active { background: #007bff; }
-        .nav .btn-logout { background: #dc3545; margin-left: auto; }
+        .nav .btn-logout { background: #dc3545; }
+        
         .container { max-width: 1200px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         h2 { border-bottom: 2px solid #007bff; padding-bottom: 10px; color: #333; margin-top:0;}
         .form-group { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap; }
         
-        /* Updated for Mobile Responsiveness */
+        /* Mobile Responsiveness */
         .form-row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
         .form-col { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 200px; }
 
@@ -78,7 +79,7 @@
         .role-admin { background: #dc3545; color: white; }
         .role-staff { background: #007bff; color: white; }
 
-        /* CSS Print Settings (No changes - Safe) */
+        /* CSS Print Settings */
         @media print {
             @page { size: A4; margin: 4mm; } 
             body { background: white; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -87,7 +88,6 @@
             #print-tab { display: block !important; }
             .tab-content:not(#print-tab) { display: none !important; }
             
-            /* Hide responsive wrappers for print to allow full width */
             .table-responsive { overflow-x: visible !important; margin: 0; }
             .table-responsive table { min-width: 0 !important; }
 
@@ -154,7 +154,12 @@
             <button id="nav-users" onclick="showTab('users-tab')" style="background: #343a40;">🔑 8. សិទ្ធិប្រើប្រាស់</button>
             <button id="nav-logs" onclick="showTab('log-tab')" style="background: #ffc107; color: black;">📝 9. កំណត់ត្រាសកម្មភាព</button>
             <button id="nav-profile" onclick="showTab('profile-tab')" style="background: #17a2b8;">👤 គណនីខ្ញុំ</button>
-            <button class="btn-logout" onclick="logoutUser()">🔒 ចាកចេញ</button>
+            
+            <!-- បង្ហាញឈ្មោះ User ដែលកំពុង Login គ្រប់ផ្ទាំង -->
+            <div style="margin-left:auto; display:flex; align-items:center; gap:10px;">
+                <span style="color:#ffc107; font-size:15px; font-weight:bold;">👤 User: <span id="currentUserName" style="color:white;">...</span></span>
+                <button class="btn-logout" onclick="logoutUser()">🔒 ចាកចេញ</button>
+            </div>
         </div>
 
         <div class="container">
@@ -200,7 +205,6 @@
                     </div>
                     <button class="btn-save" onclick="saveCompanyProfile()">រក្សាទុកការកំណត់</button>
 
-                    <!-- ប្លុក Backup & Restore -->
                     <div class="section-title" style="background: #d4edda; border-left-color: #28a745; margin-top: 25px;">
                         💾 ការគ្រប់គ្រងទិន្នន័យ (Data Backup & Restore)
                     </div>
@@ -259,7 +263,7 @@
                 <h2>បញ្ជីអតិថិជន (Customer List)</h2>
                 <div class="sub-box">
                     <div class="form-row">
-                        <div class="form-col"><label>លេខកូដ</label><input type="text" id="cusCode" placeholder="ឧ. C001" readonly style="background:#e9ecef;"></div>
+                        <div class="form-col"><label>លេខកូដ (Auto)</label><input type="text" id="cusCode" placeholder="Auto (បង្កើតស្វ័យប្រវត្តិ)" readonly style="background:#e9ecef;"></div>
                         <div class="form-col"><label>ឈ្មោះអតិថិជន <span style="color:red;">*</span></label><input type="text" id="cusList_Name"></div>
                         <div class="form-col"><label>ឈ្មោះគូស្វាមីភរិយា</label><input type="text" id="cusList_CoupleName"></div>
                     </div>
@@ -495,8 +499,9 @@
                 <div class="sub-box">
                     <h3 style="margin-top:0; color:#343a40;">បង្កើតគណនីបុគ្គលិកថ្មី</h3>
                     <div class="form-row" style="align-items: center;">
-                        <div class="form-col" style="flex: 2;"><label>អ៊ីម៉ែល (Email សម្រាប់ Login):</label><input type="email" id="newRoleEmail" placeholder="ឧ. staff@gmail.com"></div>
-                        <div class="form-col" style="flex: 2;"><label>លេខសម្ងាត់ (យ៉ាងតិច ៦ខ្ទង់):</label><input type="password" id="newRolePass" placeholder="******"></div>
+                        <div class="form-col" style="flex: 1.5;"><label>ឈ្មោះ (Username):</label><input type="text" id="newRoleName" placeholder="ឧ. សុខ ដារ៉ា"></div>
+                        <div class="form-col" style="flex: 1.5;"><label>អ៊ីម៉ែល (Email):</label><input type="email" id="newRoleEmail" placeholder="ឧ. staff@gmail.com"></div>
+                        <div class="form-col" style="flex: 1.5;"><label>លេខសម្ងាត់ (យ៉ាងតិច ៦ខ្ទង់):</label><input type="password" id="newRolePass" placeholder="******"></div>
                         <div class="form-col" style="flex: 1;">
                             <label>ជ្រើសរើសសិទ្ធិ:</label>
                             <select id="newRoleType" style="padding: 8px; border-radius: 4px; font-weight:bold;">
@@ -509,7 +514,7 @@
                 </div>
                 <div class="table-responsive">
                     <table>
-                        <thead><tr><th>ល.រ</th><th>គណនីអ៊ីម៉ែល (Email)</th><th>សិទ្ធិ (Role)</th><th>សកម្មភាព</th></tr></thead>
+                        <thead><tr><th>ល.រ</th><th>ឈ្មោះ & គណនី (Email)</th><th>សិទ្ធិ (Role)</th><th>សកម្មភាព</th></tr></thead>
                         <tbody id="userRolesBody"></tbody>
                     </table>
                 </div>
@@ -536,7 +541,7 @@
                 <div class="sub-box" style="max-width: 600px;">
                     <div class="form-group">
                         <label>ឈ្មោះរបស់អ្នក (បង្ហាញលើវិក្កយបត្រ):</label>
-                        <input type="text" id="myProfileName" placeholder="ឧ. នី និមល">
+                        <input type="text" id="myProfileName" placeholder="ឧ. ឈ្មោះ">
                     </div>
                     <div class="form-group">
                         <label>ហត្ថលេខារបស់អ្នក (សាញេ):</label>
@@ -626,6 +631,7 @@
                 loggedInEmail = user.email;
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('app-content').style.display = 'block';
+                updateUserDisplay(); // Update display name
                 startDatabaseListener();
             } else {
                 loggedInEmail = '';
@@ -670,7 +676,6 @@
         function logoutUser() {
             if(confirm("តើអ្នកពិតជាចង់ចាកចេញពីប្រព័ន្ធមែនទេ?")) {
                 addLog("បានចាកចេញពីប្រព័ន្ធ (Logout)", "");
-                // Unsubscribe from all independent listeners
                 db.ref('chheangleng_db/items').off();
                 db.ref('chheangleng_db/quotations').off();
                 db.ref('chheangleng_db/customers').off();
@@ -682,7 +687,6 @@
             }
         }
 
-        /* ប្តូររបៀបទាញទិន្នន័យពី Cloud ដើម្បីអោយវាស្រាលពេលប្រើលើទូរស័ព្ទ */
         let isFirstLoad = true;
         let loadedCount = 0;
 
@@ -746,15 +750,24 @@
 
             db.ref('chheangleng_db/userProfiles').on('value', snap => {
                 userProfiles = snap.val() || {};
+                updateUserDisplay(); // Update display info based on profile
                 loadedCount < 7 ? checkInitialLoad() : triggerRefresh();
             }, errorCallback);
 
-            // កំណត់ទាញយកតែ ១០០ សកម្មភាពចុងក្រោយ
             db.ref('chheangleng_db/logs').orderByKey().limitToLast(100).on('value', snap => {
                 let d = snap.val() || {}; 
                 logs = Object.keys(d).map(k => ({...d[k], dbKey: k})).sort((a,b) => new Date(b.date) - new Date(a.date));
                 loadedCount < 7 ? checkInitialLoad() : triggerRefresh();
             }, errorCallback);
+        }
+
+        // មុខងារបង្ហាញឈ្មោះ User លើរបារ Nav
+        function updateUserDisplay() {
+            if(!loggedInEmail) return;
+            let key = loggedInEmail.replace(/\./g, ',');
+            let myProf = userProfiles[key] || {};
+            let dispName = myProf.name || loggedInEmail;
+            document.getElementById('currentUserName').innerText = dispName;
         }
 
         function applyPermissions() {
@@ -772,7 +785,11 @@
         }
 
         function addLog(action, detail) {
-            let logData = { date: new Date().toISOString(), user: loggedInEmail || 'Unknown', action: action, detail: detail };
+            // Include user's current display name in logs if available
+            let key = loggedInEmail.replace(/\./g, ',');
+            let myProf = userProfiles[key] || {};
+            let dispName = myProf.name || loggedInEmail;
+            let logData = { date: new Date().toISOString(), user: dispName, action: action, detail: detail };
             db.ref('chheangleng_db/logs').push(logData);
         }
 
@@ -851,14 +868,17 @@
             for(let key in userRoles) {
                 let email = key.replace(/,/g, '.');
                 let role = userRoles[key];
+                let prof = userProfiles[key] || {};
+                let uNameDisplay = prof.name ? `<br><small style="color:gray;">${escapeHTML(prof.name)}</small>` : '';
                 let badge = role === 'admin' ? '<span class="role-badge role-admin">Admin</span>' : '<span class="role-badge role-staff">Staff</span>';
                 let isMe = (email === loggedInEmail); 
                 let actionBtn = isMe ? `<span style="color:gray; font-size:12px;">(គណនីរបស់អ្នក)</span>` : `<button class="btn-danger" onclick="removeRole('${key}')">❌ ដកសិទ្ធិ</button>`;
-                body.innerHTML += `<tr><td>${i++}</td><td style="font-weight:bold;">${escapeHTML(email)}</td><td>${badge}</td><td>${actionBtn}</td></tr>`;
+                body.innerHTML += `<tr><td>${i++}</td><td style="font-weight:bold;">${escapeHTML(email)}${uNameDisplay}</td><td>${badge}</td><td>${actionBtn}</td></tr>`;
             }
         }
 
         function createNewUserAccount() {
+            let userName = document.getElementById('newRoleName').value.trim();
             let email = document.getElementById('newRoleEmail').value.trim();
             let pass = document.getElementById('newRolePass').value.trim();
             let role = document.getElementById('newRoleType').value;
@@ -873,8 +893,14 @@
 
                     let key = email.replace(/\./g, ',');
                     db.ref(`chheangleng_db/userRoles/${key}`).set(role);
-                    addLog("ផ្តល់សិទ្ធិគណនី", `Email: ${email}, សិទ្ធិ: ${role}`);
                     
+                    if (userName) {
+                        db.ref(`chheangleng_db/userProfiles/${key}`).update({name: userName});
+                    }
+
+                    addLog("ផ្តល់សិទ្ធិគណនី", `Email: ${email}, ឈ្មោះ: ${userName||'-'}, សិទ្ធិ: ${role}`);
+                    
+                    document.getElementById('newRoleName').value = '';
                     document.getElementById('newRoleEmail').value = '';
                     document.getElementById('newRolePass').value = '';
                     alert("✅ បានបង្កើតគណនី និងកំណត់សិទ្ធិជោគជ័យ! លោកអ្នកអាចយកគណនីថ្មីនេះទៅ Login បានហើយ។");
@@ -895,7 +921,7 @@
         function renderLogsTable() {
             let b = document.getElementById("logBody");
             b.innerHTML = "";
-            let limit = Math.min(logs.length, 100); // Only loop through what is available (max 100)
+            let limit = Math.min(logs.length, 100); 
             for(let i=0; i<limit; i++) {
                 let l = logs[i];
                 let d = new Date(l.date).toLocaleString('en-GB'); 
@@ -1020,24 +1046,34 @@
         function exportItemsTemplate() { if(typeof XLSX === 'undefined') return; let data = items.length > 0 ? items.map(i => ({ Code: i.code, Category: i.cat, Name: i.name, Cost: i.cost, Price: i.price })) : [{ Code: 'P001', Category: 'ស្រាបៀរ', Name: 'Angkor Beer', Cost: 10, Price: 12 }]; let ws = XLSX.utils.json_to_sheet(data); let wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Items"); XLSX.writeFile(wb, "Item_Template.xlsx"); addLog("ទាញគំរូ Excel", ""); }
 
         function generateCustomerCode() { let max = 0; customers.forEach(c => { if(c.code && c.code.startsWith("C")) { let num = parseInt(c.code.replace("C", '')); if(!isNaN(num) && num > max) max = num; } }); return "C" + String(max + 1).padStart(3, '0'); }
-        function resetCustomerForm() { currentEditCustomerIndex = -1; document.getElementById("cusCode").value = generateCustomerCode(); ["cusList_Name", "cusList_CoupleName", "cusList_Phone1", "cusList_Phone2", "cusList_Email", "cusList_Note"].forEach(id => document.getElementById(id).value = ''); document.getElementById("btnSaveCustomer").innerText = "រក្សាទុក"; }
+        
+        function resetCustomerForm() { 
+            currentEditCustomerIndex = -1; 
+            document.getElementById("cusCode").value = "Auto (បង្កើតស្វ័យប្រវត្តិ)"; // Changed to prevent confusion
+            ["cusList_Name", "cusList_CoupleName", "cusList_Phone1", "cusList_Phone2", "cusList_Email", "cusList_Note"].forEach(id => document.getElementById(id).value = ''); 
+            document.getElementById("btnSaveCustomer").innerText = "រក្សាទុក"; 
+        }
         
         function saveCustomer() { 
             let name = document.getElementById("cusList_Name").value.trim(); 
             if(!name) return; 
             let cusCode = document.getElementById("cusCode").value; 
             let cusData = { 
-                code: cusCode, name: name, coupleName: document.getElementById("cusList_CoupleName").value, 
+                name: name, coupleName: document.getElementById("cusList_CoupleName").value, 
                 phone1: document.getElementById("cusList_Phone1").value, phone2: document.getElementById("cusList_Phone2").value, 
                 email: document.getElementById("cusList_Email").value, note: document.getElementById("cusList_Note").value, 
                 receivedFreeItem: currentEditCustomerIndex > -1 ? customers[currentEditCustomerIndex].receivedFreeItem : false,
                 lastUpdated: new Date().toISOString()
             }; 
             if (currentEditCustomerIndex > -1) { 
+                cusData.code = cusCode; // keep old code
                 let key = customers[currentEditCustomerIndex].dbKey;
                 db.ref(`chheangleng_db/customers/${key}`).update(cusData);
                 addLog("កែប្រែអតិថិជន", `កូដ: ${cusCode}, ឈ្មោះ: ${name}`); 
             } else { 
+                // Generate code right at the moment of saving to avoid duplicates
+                cusCode = generateCustomerCode();
+                cusData.code = cusCode;
                 db.ref('chheangleng_db/customers').push(cusData);
                 addLog("បង្កើតអតិថិជនថ្មី", `កូដ: ${cusCode}, ឈ្មោះ: ${name}`); 
             } 
@@ -1054,7 +1090,10 @@
         function renderCustomerTable() { 
             let body = document.getElementById("customerListBody"); 
             body.innerHTML = ""; 
-            customers.forEach((c, index) => { 
+            let rowNum = 1;
+            // រង្វិលជុំថយក្រោយ ដើម្បីបង្ហាញអ្នកទើបបង្កើតថ្មីៗឲ្យលោតមកលើគេ
+            for (let index = customers.length - 1; index >= 0; index--) {
+                let c = customers[index];
                 let phones = c.phone1 || ''; if(c.phone2) phones += " / " + c.phone2; 
                 let relatedQuotes = quotations.filter(q => q.customer === c.name); 
                 let depositDate = "-", wedDate = "-", statusBadge = "", hasDeposit = "no", docInfo = "-", invoiceBadge = "-"; 
@@ -1068,8 +1107,8 @@
                 } else { statusBadge = `<span style="color:gray; font-size:12px;">គ្មាន Quote</span>`; } 
                 
                 let delBtn = currentRole === 'admin' ? `<button class="btn-danger" onclick="deleteCustomer(${index})">❌</button>` : '';
-                body.innerHTML += `<tr data-deposit="${hasDeposit}"><td>${index+1}</td><td>${escapeHTML(c.code)}</td><td style="font-weight:bold; color:#007bff; min-width: 150px;">${escapeHTML(c.name)}</td><td>${escapeHTML(phones)}</td><td>${invoiceBadge}</td><td>${wedDate}</td><td>${escapeHTML(docInfo)}</td><td>${depositDate}</td><td>${statusBadge}</td><td style="text-align:center;"><input type="checkbox" onchange="toggleFreeItem(${index})" ${c.receivedFreeItem?'checked':''}></td><td class="nowrap"><button class="btn-edit" onclick="editCustomer(${index})">កែ</button> ${delBtn}</td></tr>`; 
-            }); 
+                body.innerHTML += `<tr data-deposit="${hasDeposit}"><td>${rowNum++}</td><td>${escapeHTML(c.code)}</td><td style="font-weight:bold; color:#007bff; min-width: 150px;">${escapeHTML(c.name)}</td><td>${escapeHTML(phones)}</td><td>${invoiceBadge}</td><td>${wedDate}</td><td>${escapeHTML(docInfo)}</td><td>${depositDate}</td><td>${statusBadge}</td><td style="text-align:center;"><input type="checkbox" onchange="toggleFreeItem(${index})" ${c.receivedFreeItem?'checked':''}></td><td class="nowrap"><button class="btn-edit" onclick="editCustomer(${index})">កែ</button> ${delBtn}</td></tr>`; 
+            } 
         }
         
         function editCustomer(index) { let c = customers[index]; currentEditCustomerIndex = index; document.getElementById("cusCode").value = c.code; document.getElementById("cusList_Name").value = c.name; document.getElementById("cusList_CoupleName").value = c.coupleName||''; document.getElementById("cusList_Phone1").value = c.phone1||''; document.getElementById("cusList_Phone2").value = c.phone2||''; document.getElementById("cusList_Email").value = c.email||''; document.getElementById("cusList_Note").value = c.note||''; document.getElementById("btnSaveCustomer").innerText = "Update"; }
@@ -1305,7 +1344,7 @@
             let savedByKey = q.savedBy || loggedInEmail.replace(/\./g, ',');
             let printProf = userProfiles[savedByKey] || {};
             let printSig = printProf.signature || company.signature || '';
-            let printName = printProf.name || company.sellerName || 'នី និមល';
+            let printName = printProf.name || company.sellerName || 'ឈ្មោះ';
             
             h += `<div class="keep-together">
                     <table class="quote-print-table" style="margin-top:0;">
