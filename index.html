@@ -593,13 +593,45 @@
     </div>
 
     <script>
+        let isMobilePrinting = false; // បន្ថែមអញ្ញាតនេះសម្រាប់តាមដានស្ថានភាព Print
+
         $(document).ready(function() {
             $('.select2').select2({ width: '100%' });
             
-            // ការពារការជាប់គាំងផ្ទាំង Print នៅពេលប្រើកម្មវិធី Print ធម្មតា
+            // វិធីទី១៖ ប្រើប្រាស់ Event ធម្មតា (សម្រាប់កុំព្យូទ័រ)
             window.addEventListener('afterprint', function() {
-                showTab('db-tab'); // ត្រឡប់ទៅបញ្ជីស្វ័យប្រវត្តិ
+                document.title = "Chheangleng Depot System";
+                showTab('db-tab');
+                isMobilePrinting = false;
             });
+
+            // វិធីទី២៖ សម្រាប់ទូរស័ព្ទ (iOS/Safari) ពេលបិទផ្ទាំង Share ហើយត្រឡប់មក Browser វិញ
+            window.addEventListener('focus', function() {
+                if (isMobilePrinting) {
+                    setTimeout(function() {
+                        document.title = "Chheangleng Depot System";
+                        showTab('db-tab');
+                        isMobilePrinting = false;
+                    }, 500);
+                }
+            });
+
+            // វិធីទី៣៖ ប្រើប្រាស់ Media Query (សុវត្ថិភាពបន្ថែម)
+            if (window.matchMedia) {
+                let mediaQueryList = window.matchMedia('print');
+                let printEndHandler = function(mql) {
+                    if (!mql.matches) {
+                        document.title = "Chheangleng Depot System";
+                        showTab('db-tab');
+                        isMobilePrinting = false;
+                    }
+                };
+                if (mediaQueryList.addEventListener) {
+                    mediaQueryList.addEventListener('change', printEndHandler);
+                } else {
+                    mediaQueryList.addListener(printEndHandler); // Fallback
+                }
+            }
         });
 
         const firebaseConfig = {
@@ -636,7 +668,7 @@
                 loggedInEmail = user.email;
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('app-content').style.display = 'block';
-                updateUserDisplay(); // Update display name
+                updateUserDisplay(); 
                 startDatabaseListener();
             } else {
                 loggedInEmail = '';
@@ -755,7 +787,7 @@
 
             db.ref('chheangleng_db/userProfiles').on('value', snap => {
                 userProfiles = snap.val() || {};
-                updateUserDisplay(); // Update display info based on profile
+                updateUserDisplay();
                 loadedCount < 7 ? checkInitialLoad() : triggerRefresh();
             }, errorCallback);
 
@@ -766,7 +798,6 @@
             }, errorCallback);
         }
 
-        // មុខងារបង្ហាញឈ្មោះ User លើរបារ Nav
         function updateUserDisplay() {
             if(!loggedInEmail) return;
             let key = loggedInEmail.replace(/\./g, ',');
@@ -790,7 +821,6 @@
         }
 
         function addLog(action, detail) {
-            // Include user's current display name in logs if available
             let key = loggedInEmail.replace(/\./g, ',');
             let myProf = userProfiles[key] || {};
             let dispName = myProf.name || loggedInEmail;
@@ -1071,7 +1101,7 @@
                 lastUpdated: new Date().toISOString()
             }; 
             if (currentEditCustomerIndex > -1) { 
-                cusData.code = cusCode; // keep old code
+                cusData.code = cusCode; 
                 let key = customers[currentEditCustomerIndex].dbKey;
                 db.ref(`chheangleng_db/customers/${key}`).update(cusData);
                 addLog("កែប្រែអតិថិជន", `កូដ: ${cusCode}, ឈ្មោះ: ${name}`); 
@@ -1381,22 +1411,28 @@
             document.getElementById('print-tab').classList.add('active'); 
         }
 
+        // ការងារ Print នៅលើទូរស័ព្ទត្រូវបានកែសម្រួលដើម្បីចាប់យកពេលដែល Share រួច
         function mobilePrint() {
-            // រក្សាទុកឈ្មោះដើមរបស់វិបសាយ
-            let originalTitle = document.title;
+            let originalTitle = "Chheangleng Depot System";
             let invNo = document.getElementById("pr_invNo").innerText || "Invoice";
             
-            // ប្តូរឈ្មោះឯកសារជាបណ្តោះអាសន្ន ដើម្បីពេល Share ទៅ Telegram ជាប់ឈ្មោះ File ជាលេខវិក្កយបត្រជានិច្ច
+            // ប្តូរឈ្មោះជាលេខវិក្កយបត្រ ដើម្បីពេល Share ចូល Telegram ឬកម្មវិធីផ្សេងៗ វាលោតឈ្មោះស្អាត
             document.title = invNo; 
+            isMobilePrinting = true;
 
-            // ប្រើមុខងារ Print របស់ Browser ផ្ទាល់ (មិនបើក Tab ថ្មីទេ ព្រោះវាធ្វើឲ្យមុខងារ Share រអាក់រអួល)
-            window.print();
-            
-            // បន្ទាប់ពីផ្ទាំង Share/Print ត្រូវបានបិទ វាពន្យារពេល ១វិនាទី រួចត្រឡប់ទៅ Database ស្វ័យប្រវត្តិ
+            // ពន្យារពេលបន្តិច ដើម្បីឲ្យ Browser ផ្លាស់ប្តូរឈ្មោះរួចរាល់ទើបហៅផ្ទាំង Print/Share មក
             setTimeout(function() {
-                document.title = originalTitle; // ប្រគល់ឈ្មោះដើមវិញ
-                showTab('db-tab'); // លោតទៅបញ្ជី Database វិញ
-            }, 1000);
+                window.print();
+                
+                // វិធីទី៤៖ សម្រាប់ Android ឬ កុំព្យូទ័រ ដែលមិនមានការ Pause កូដពេលចេញផ្ទាំង Print
+                setTimeout(function() {
+                    if (isMobilePrinting) {
+                        document.title = originalTitle;
+                        showTab('db-tab');
+                        isMobilePrinting = false;
+                    }
+                }, 1500);
+            }, 300);
         }
 
         function generatePendingQuoteReport() { let fD = document.getElementById("repPendingDateFrom").value; let tD = document.getElementById("repPendingDateTo").value; let b = document.getElementById("pendingQuoteReportBody"); let h = "", c = 0; quotations.forEach(q => { let dp = parseFloat(q.deposit)||0; if(dp<=0) { let cd = q.issueDate||q.date; if(cd>=fD && cd<=tD) { c++; h += `<tr><td><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color:#007bff;">${escapeHTML(q.quoteNo)}</a></td><td>${cd}</td><td>${escapeHTML(q.customer)}</td><td>${escapeHTML(q.phone)}</td><td style="color:red;">$${(q.grandTotal||0).toFixed(2)}</td></tr>`; } } }); b.innerHTML = c===0 ? `<tr><td colspan="5" style="text-align:center;">គ្មានទិន្នន័យ!</td></tr>` : h; }
