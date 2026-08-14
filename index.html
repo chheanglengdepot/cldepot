@@ -1325,7 +1325,7 @@
             let h = `<table class="quote-print-table"><tbody>`; 
             h += `<tr style="border-top: 2px solid #000;"><th colspan="2" style="text-align:left;">ទំនិញព្រឹក+ហែរជំនូន+បាយថ្ងៃ</th><th class="bg-yellow nowrap">តុ: ${q.morningTables||0}</th><th class="t-center nowrap">ចំនួន</th><th class="t-center nowrap">ឯកតា</th><th class="t-center nowrap">ចំណាយ</th><th class="t-center nowrap">សរុប</th></tr>`; 
             
-            let maxM = Math.max(mI.length, 6);
+            let maxM = Math.max(mI.length, 8);
             for(let i=0; i<maxM; i++) { 
                 if(i<mI.length) { h += `<tr class="dotted-row"><td colspan="3">${escapeHTML(mI[i].name)}</td><td class="t-center">${mI[i].qty}</td><td class="t-center">${escapeHTML(mI[i].unit)}</td><td>$${mI[i].price.toFixed(2)}</td><td>$${mI[i].total.toFixed(2)}</td></tr>`; } else { h += `<tr class="dotted-row"><td colspan="3" style="color:transparent;">-</td><td></td><td></td><td></td><td></td></tr>`; } 
             } 
@@ -1333,7 +1333,7 @@
             h += `<tr class="bg-grey"><td colspan="6">សរុបការចំណាយនៅផ្ទះ:</td><td>$${(q.subTotalMorning||0).toFixed(2)}</td></tr><tr><td colspan="7" style="border:none; height: 2px;"></td></tr>`; 
             h += `<tr style="border-top: 2px solid #000;"><th colspan="2" style="text-align:left;">ទំនិញភ្ញៀវពេលល្ងាច</th><th class="bg-yellow nowrap">តុ: ${q.eveningTables||0}</th><th class="t-center nowrap">ចំនួន</th><th class="t-center nowrap">ឯកតា</th><th class="t-center nowrap">ចំណាយ</th><th class="t-center nowrap">សរុប</th></tr>`; 
             
-            let maxE = Math.max(eI.length, 9);
+            let maxE = Math.max(eI.length, 8);
             for(let i=0; i<maxE; i++) { 
                 if(i<eI.length) { h += `<tr class="dotted-row"><td colspan="3">${escapeHTML(eI[i].name)}</td><td class="t-center">${eI[i].qty}</td><td class="t-center">${escapeHTML(eI[i].unit)}</td><td>$${eI[i].price.toFixed(2)}</td><td>$${eI[i].total.toFixed(2)}</td></tr>`; } else { h += `<tr class="dotted-row"><td colspan="3" style="color:transparent;">-</td><td></td><td></td><td></td><td></td></tr>`; } 
             } 
