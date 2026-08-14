@@ -30,28 +30,40 @@
         .tab-content.active { display: block; }
         h2 { border-bottom: 2px solid #007bff; padding-bottom: 10px; color: #333; margin-top:0;}
         .form-group { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap; }
-        .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
-        .form-col { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+        
+        /* Updated for Mobile Responsiveness */
+        .form-row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
+        .form-col { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 200px; }
+
         input, select, textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; font-family: 'Khmer OS Battambang', 'Arial', sans-serif; }
         .btn-add { background: #28a745; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; }
         .btn-edit { background: #ffc107; color: black; border: none; padding: 6px 10px; cursor: pointer; border-radius: 4px; margin-right: 5px; }
         .btn-save { background: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; margin-top: 10px; font-size: 16px;}
         .btn-danger { background: #dc3545; color: white; border: none; padding: 6px 10px; cursor: pointer; border-radius: 4px; }
         .btn-filter { background: #6c757d; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 4px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        
+        /* Table Responsiveness Update */
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 10px; }
+        .table-responsive table { width: 100%; border-collapse: collapse; min-width: 700px; margin-top: 0; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: middle; font-size: 14px;}
         th { background-color: #f8f9fa; }
+        
         .section-title { background: #e9ecef; padding: 8px 10px; border-left: 4px solid #007bff; font-weight: bold; margin-bottom: 10px; margin-top: 20px;}
         .sub-box { background: #fdfdfd; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin-bottom: 15px; }
-        .report-summary-box { display: flex; gap: 20px; margin-bottom: 20px; }
-        .summary-card { background: #e9ecef; padding: 15px; border-radius: 8px; flex: 1; text-align: center; border: 1px solid #ddd; }
+        .report-summary-box { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .summary-card { background: #e9ecef; padding: 15px; border-radius: 8px; flex: 1; text-align: center; border: 1px solid #ddd; min-width: 150px; }
         .summary-card h3 { margin: 0; font-size: 24px; color: #007bff; }
         .summary-card p { margin: 5px 0 0 0; font-size: 14px; font-weight: bold; }
         .export-btns { float: right; margin-top: -45px; }
+        
+        @media (max-width: 768px) {
+            .export-btns { float: none; margin-top: 10px; margin-bottom: 15px; display: block; }
+        }
+
         #sync-status { text-align: center; font-size: 14px; padding: 5px; background: #ffc107; color: black; display: none; }
 
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #e9ecef; display: flex; justify-content: center; align-items: center; z-index: 9999; }
-        .login-box { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        .login-box { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 90%; max-width: 400px; text-align: center; }
         .login-box h2 { border: none; color: #007bff; margin-bottom: 5px; }
         .login-box p { color: #666; margin-bottom: 25px; font-size: 15px; }
         .login-box input { margin-bottom: 15px; padding: 12px; font-size: 15px; }
@@ -66,7 +78,7 @@
         .role-admin { background: #dc3545; color: white; }
         .role-staff { background: #007bff; color: white; }
 
-        /* CSS Print Settings */
+        /* CSS Print Settings (No changes - Safe) */
         @media print {
             @page { size: A4; margin: 4mm; } 
             body { background: white; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -75,6 +87,10 @@
             #print-tab { display: block !important; }
             .tab-content:not(#print-tab) { display: none !important; }
             
+            /* Hide responsive wrappers for print to allow full width */
+            .table-responsive { overflow-x: visible !important; margin: 0; }
+            .table-responsive table { min-width: 0 !important; }
+
             .header-print { display: flex; align-items: center; border-bottom: 2px solid #000; padding-bottom: 3px; margin-bottom: 5px; }
             .header-print .logo { width: 80px; text-align: center; }
             .header-print .logo img { max-width: 60px; max-height: 60px; }
@@ -193,7 +209,7 @@
                         
                         <div class="form-group" style="align-items: center; margin-bottom: 0;">
                             <button class="btn-save" style="background-color: #28a745; margin-top: 0;" onclick="backupData()">
-                                ⬇️ ទាញយកទិន្នន័យបម្រុង (Backup)
+                                ⬇️ ទាញយកទិន្នន័យ (Backup)
                             </button>
                             <span style="margin: 0 15px; font-weight: bold;">|</span>
                             <input type="file" id="restoreFileInput" accept=".json" style="max-width: 250px; background: white;">
@@ -209,7 +225,7 @@
             <div id="item-tab" class="tab-content">
                 <h2 id="itemTitle">បញ្ជីផលិតផល (Item List)</h2>
                 <div class="form-group" style="background: #e1f5fe; padding: 15px; border-radius: 4px; justify-content: space-between; border: 1px solid #03a9f4;">
-                    <div style="display:flex; align-items:center; gap: 10px;">
+                    <div style="display:flex; align-items:center; flex-wrap:wrap; gap: 10px;">
                         <strong>📥 បញ្ចូលទំនិញពី Excel:</strong>
                         <input type="file" id="excelFileInput" accept=".xlsx, .xls" style="width: auto; background: white;">
                         <button class="btn-add" style="background: #0288d1;" onclick="importExcel()">ទាញទិន្នន័យចូល</button>
@@ -219,21 +235,23 @@
                 </div>
                 <div class="form-group" style="align-items: flex-end;">
                     <div style="width: 120px;"><label>លេខកូដ</label><input type="text" id="itemCode" placeholder="ឧ. P001"></div>
-                    <div style="flex: 1;"><label>ប្រភេទ</label><input type="text" id="itemCat" list="catList" oninput="generateAutoCode()" placeholder="ឧ. ស្រាបៀរ"><datalist id="catList"></datalist></div>
-                    <div style="flex: 2;"><label>ឈ្មោះផលិតផល</label><input type="text" id="itemName"></div>
+                    <div style="flex: 1; min-width: 150px;"><label>ប្រភេទ</label><input type="text" id="itemCat" list="catList" oninput="generateAutoCode()" placeholder="ឧ. ស្រាបៀរ"><datalist id="catList"></datalist></div>
+                    <div style="flex: 2; min-width: 200px;"><label>ឈ្មោះផលិតផល</label><input type="text" id="itemName"></div>
                     <div style="width: 120px;"><label>តម្លៃដើម</label><input type="number" id="itemCost"></div>
                     <div style="width: 120px;"><label>តម្លៃលក់</label><input type="number" id="itemPrice"></div>
                     <button class="btn-add" id="btnSaveItem" onclick="saveNewItem()">រក្សាទុក</button>
                     <button class="btn-edit" onclick="resetItemForm()">Clear</button>
                 </div>
                 <div class="form-group" style="border-top: 1px solid #ccc; padding-top: 15px; margin-top: 5px;">
-                    <input type="text" id="searchItemInput" onkeyup="searchItems()" placeholder="🔍 ស្វែងរក កូដ, ឈ្មោះផលិតផល..." style="flex: 1; border: 2px solid #007bff;">
-                    <select id="filterCategory" onchange="searchItems()" style="flex: 1; border: 2px solid #28a745; max-width: 300px;"><option value="">-- ចម្រោះតាមប្រភេទទំនិញទាំងអស់ --</option></select>
+                    <input type="text" id="searchItemInput" onkeyup="searchItems()" placeholder="🔍 ស្វែងរក កូដ, ឈ្មោះផលិតផល..." style="flex: 1; min-width: 200px; border: 2px solid #007bff;">
+                    <select id="filterCategory" onchange="searchItems()" style="flex: 1; border: 2px solid #28a745; min-width: 200px;"><option value="">-- ចម្រោះតាមប្រភេទទំនិញទាំងអស់ --</option></select>
                 </div>
-                <table>
-                    <thead><tr><th>ល.រ</th><th>កូដ</th><th>ប្រភេទ</th><th>បរិយាយផលិតផល</th><th>តម្លៃដើម</th><th>តម្លៃលក់</th><th>សកម្មភាព</th></tr></thead>
-                    <tbody id="itemListBody"></tbody>
-                </table>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>ល.រ</th><th>កូដ</th><th>ប្រភេទ</th><th>បរិយាយផលិតផល</th><th>តម្លៃដើម</th><th>តម្លៃលក់</th><th>សកម្មភាព</th></tr></thead>
+                        <tbody id="itemListBody"></tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- ផ្ទាំងទី៣: បញ្ជីអតិថិជន -->
@@ -241,7 +259,7 @@
                 <h2>បញ្ជីអតិថិជន (Customer List)</h2>
                 <div class="sub-box">
                     <div class="form-row">
-                        <div class="form-col" style="flex: 0.5;"><label>លេខកូដ</label><input type="text" id="cusCode" placeholder="ឧ. C001" readonly style="background:#e9ecef;"></div>
+                        <div class="form-col"><label>លេខកូដ</label><input type="text" id="cusCode" placeholder="ឧ. C001" readonly style="background:#e9ecef;"></div>
                         <div class="form-col"><label>ឈ្មោះអតិថិជន <span style="color:red;">*</span></label><input type="text" id="cusList_Name"></div>
                         <div class="form-col"><label>ឈ្មោះគូស្វាមីភរិយា</label><input type="text" id="cusList_CoupleName"></div>
                     </div>
@@ -251,23 +269,25 @@
                         <div class="form-col"><label>អ៊ីម៉ែល</label><input type="email" id="cusList_Email"></div>
                     </div>
                     <div class="form-group" style="align-items: flex-end;">
-                        <div style="flex:1;"><label>ផ្សេងៗ (ចំណាំ)</label><input type="text" id="cusList_Note"></div>
+                        <div style="flex:1; min-width: 200px;"><label>ផ្សេងៗ (ចំណាំ)</label><input type="text" id="cusList_Note"></div>
                         <button class="btn-add" id="btnSaveCustomer" onclick="saveCustomer()">រក្សាទុក</button>
                         <button class="btn-edit" onclick="resetCustomerForm()">Clear</button>
                     </div>
                 </div>
                 <div class="form-group" style="border-top: 1px solid #ccc; padding-top: 15px; margin-top: 5px;">
-                    <input type="text" id="searchCustomerInput" onkeyup="searchCustomers()" placeholder="🔍 ស្វែងរក កូដ, ឈ្មោះអតិថិជន..." style="flex: 2; border: 2px solid #28a745;">
-                    <select id="filterCustomerStatus" onchange="searchCustomers()" style="flex: 1; border: 2px solid #ffc107; max-width: 280px; font-weight: bold;">
+                    <input type="text" id="searchCustomerInput" onkeyup="searchCustomers()" placeholder="🔍 ស្វែងរក កូដ, ឈ្មោះអតិថិជន..." style="flex: 2; min-width: 200px; border: 2px solid #28a745;">
+                    <select id="filterCustomerStatus" onchange="searchCustomers()" style="flex: 1; border: 2px solid #ffc107; min-width: 200px; font-weight: bold;">
                         <option value="all">-- បង្ហាញទាំងអស់ --</option>
                         <option value="no_deposit" style="color: red;">⚠️ មិនទាន់កក់ប្រាក់ (Follow up)</option>
                         <option value="deposited" style="color: green;">✅ កក់ប្រាក់រួច</option>
                     </select>
                 </div>
-                <table>
-                    <thead><tr><th>ល.រ</th><th>កូដ</th><th>ឈ្មោះអតិថិជន</th><th>លេខទូរស័ព្ទ</th><th>វិក្កយបត្រ</th><th>ថ្ងៃខែរៀបការ</th><th>ឯកសារទទួលបាន</th><th>ថ្ងៃខែកក់ប្រាក់</th><th>ប្រាក់កក់</th><th style="text-align:center;">ទទួលទំនិញថែម</th><th>សកម្មភាព</th></tr></thead>
-                    <tbody id="customerListBody"></tbody>
-                </table>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>ល.រ</th><th>កូដ</th><th>ឈ្មោះអតិថិជន</th><th>លេខទូរស័ព្ទ</th><th>វិក្កយបត្រ</th><th>ថ្ងៃខែរៀបការ</th><th>ឯកសារទទួលបាន</th><th>ថ្ងៃខែកក់ប្រាក់</th><th>ប្រាក់កក់</th><th style="text-align:center;">ទទួលទំនិញថែម</th><th>សកម្មភាព</th></tr></thead>
+                        <tbody id="customerListBody"></tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- ផ្ទាំងទី៤: Quotation -->
@@ -290,11 +310,11 @@
                     <div class="form-col"><label>ថ្ងៃខែមង្គលការ:</label><input type="date" id="wedDate"></div>
                 </div>
                 <div class="form-row" style="background:#f1f8ff; padding:10px; border:1px dashed #007bff; border-radius:4px; align-items:center;">
-                    <div style="display:flex; align-items:center; gap:8px;">
+                    <div style="display:flex; align-items:center; gap:8px; min-width: 200px;">
                         <input type="checkbox" id="quoteDocReceived" style="width:20px; height:20px; cursor:pointer;"> 
                         <label for="quoteDocReceived" style="font-weight:bold; color:#0056b3; cursor:pointer;">បានទទួលឯកសារពីភ្ញៀវ</label>
                     </div>
-                    <div style="flex:1; margin-left:15px;">
+                    <div class="form-col" style="flex:2;">
                         <input type="text" id="quoteDocNote" placeholder="ចំណាំឯកសារដែលបានទទួល (ឧ. អត្តសញ្ញាណប័ណ្ណ, ធៀបការ...)" style="width:100%; border:1px solid #007bff;">
                     </div>
                 </div>
@@ -312,40 +332,44 @@
                 <div class="sub-box">
                     <div class="form-group"><label>ចំនួនតុ (ព្រឹក):</label><input type="number" id="morningTables" value="0" style="width:150px;"></div>
                     <div class="form-group">
-                        <div style="flex: 2;">
+                        <div style="flex: 2; min-width: 200px;">
                             <select id="selectItemM" class="select2" onchange="autoFillPrice('M')">
                                 <option value="">🔍 ជ្រើសរើសទំនិញ...</option>
                             </select>
                         </div>
-                        <input type="text" id="quoteUnitM" placeholder="ឯកតា" value="កេស" style="flex: 1;">
-                        <input type="number" id="quoteQtyM" placeholder="ចំនួន" style="flex: 1;">
-                        <input type="number" id="quotePriceM" placeholder="តម្លៃរាយ ($)" style="flex: 1;">
+                        <input type="text" id="quoteUnitM" placeholder="ឯកតា" value="កេស" style="flex: 1; min-width: 80px;">
+                        <input type="number" id="quoteQtyM" placeholder="ចំនួន" style="flex: 1; min-width: 80px;">
+                        <input type="number" id="quotePriceM" placeholder="តម្លៃរាយ ($)" style="flex: 1; min-width: 100px;">
                         <button class="btn-add" onclick="addItemToQuote('M')">+ បញ្ចូល(ព្រឹក)</button>
                     </div>
-                    <table>
-                        <thead><tr><th>កូដ</th><th>ទំនិញ</th><th>ចំនួន</th><th>ឯកតា</th><th>តម្លៃរាយ</th><th>សរុប</th><th>លុប</th></tr></thead>
-                        <tbody id="morningBody"></tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th>កូដ</th><th>ទំនិញ</th><th>ចំនួន</th><th>ឯកតា</th><th>តម្លៃរាយ</th><th>សរុប</th><th>លុប</th></tr></thead>
+                            <tbody id="morningBody"></tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div class="section-title" style="background: #d1ecf1; border-left-color: #17a2b8;">ទំនិញសម្រាប់ភ្ញៀវពេលល្ងាច (នៅហាង)</div>
                 <div class="sub-box">
                     <div class="form-group"><label>ចំនួនតុ (ល្ងាច):</label><input type="number" id="eveningTables" value="0" style="width:150px;"></div>
                     <div class="form-group">
-                        <div style="flex: 2;">
+                        <div style="flex: 2; min-width: 200px;">
                             <select id="selectItemE" class="select2" onchange="autoFillPrice('E')">
                                 <option value="">🔍 ជ្រើសរើសទំនិញ...</option>
                             </select>
                         </div>
-                        <input type="text" id="quoteUnitE" placeholder="ឯកតា" value="កេស" style="flex: 1;">
-                        <input type="number" id="quoteQtyE" placeholder="ចំនួន" style="flex: 1;">
-                        <input type="number" id="quotePriceE" placeholder="តម្លៃរាយ ($)" style="flex: 1;">
+                        <input type="text" id="quoteUnitE" placeholder="ឯកតា" value="កេស" style="flex: 1; min-width: 80px;">
+                        <input type="number" id="quoteQtyE" placeholder="ចំនួន" style="flex: 1; min-width: 80px;">
+                        <input type="number" id="quotePriceE" placeholder="តម្លៃរាយ ($)" style="flex: 1; min-width: 100px;">
                         <button class="btn-add" style="background: #17a2b8;" onclick="addItemToQuote('E')">+ បញ្ចូល(ល្ងាច)</button>
                     </div>
-                    <table>
-                        <thead><tr><th>កូដ</th><th>ទំនិញ</th><th>ចំនួន</th><th>ឯកតា</th><th>តម្លៃរាយ</th><th>សរុប</th><th>លុប</th></tr></thead>
-                        <tbody id="eveningBody"></tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th>កូដ</th><th>ទំនិញ</th><th>ចំនួន</th><th>ឯកតា</th><th>តម្លៃរាយ</th><th>សរុប</th><th>លុប</th></tr></thead>
+                            <tbody id="eveningBody"></tbody>
+                        </table>
+                    </div>
                 </div>
                 
                 <div class="totals-box">
@@ -370,10 +394,12 @@
             <div id="db-tab" class="tab-content">
                 <h2>Database (បញ្ជី Quotation)</h2>
                 <div class="form-group"><input type="text" id="searchQuote" placeholder="ស្វែងរកតាមលេខ ឬ ឈ្មោះអតិថិជន..." onkeyup="searchQuotation()"></div>
-                <table>
-                    <thead><tr><th>លេខវិក្កយបត្រ</th><th>ថ្ងៃចេញតារាង</th><th>អតិថិជន</th><th>ថ្ងៃការ</th><th>ឯកសារទទួលបាន</th><th>សរុប</th><th>ប្រាក់កក់</th><th style="text-align:center;">ទូទាត់រួច</th><th>សកម្មភាព</th></tr></thead>
-                    <tbody id="dbListBody"></tbody>
-                </table>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>លេខវិក្កយបត្រ</th><th>ថ្ងៃចេញតារាង</th><th>អតិថិជន</th><th>ថ្ងៃការ</th><th>ឯកសារទទួលបាន</th><th>សរុប</th><th>ប្រាក់កក់</th><th style="text-align:center;">ទូទាត់រួច</th><th>សកម្មភាព</th></tr></thead>
+                        <tbody id="dbListBody"></tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- ផ្ទាំងទី៦: របាយការណ៍ -->
@@ -390,12 +416,14 @@
                         <label>ដល់ថ្ងៃទី:</label> <input type="date" id="repPendingDateTo" style="width: 150px;">
                         <button class="btn-filter" style="background:#ffc107; color:black;" onclick="generatePendingQuoteReport()">បង្ហាញរបាយការណ៍</button>
                     </div>
-                    <table id="pendingQuoteReportTable" style="margin-top: 10px;">
-                        <thead><tr><th>លេខវិក្កយបត្រ</th><th>ថ្ងៃចេញតារាង</th><th>អតិថិជន</th><th>លេខទូរស័ព្ទ</th><th>សរុប (Grand Total)</th></tr></thead>
-                        <tbody id="pendingQuoteReportBody">
-                            <tr><td colspan="5" style="text-align:center; color:#666;">សូមជ្រើសរើសចន្លោះកាលបរិច្ឆេទ។</td></tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table id="pendingQuoteReportTable">
+                            <thead><tr><th>លេខវិក្កយបត្រ</th><th>ថ្ងៃចេញតារាង</th><th>អតិថិជន</th><th>លេខទូរស័ព្ទ</th><th>សរុប (Grand Total)</th></tr></thead>
+                            <tbody id="pendingQuoteReportBody">
+                                <tr><td colspan="5" style="text-align:center; color:#666;">សូមជ្រើសរើសចន្លោះកាលបរិច្ឆេទ។</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 
                 <div class="section-title">🚚 របាយការណ៍ដឹកជញ្ជូនទំនិញ (Delivery Report)</div>
@@ -409,12 +437,14 @@
                         <label>ដល់ថ្ងៃទី:</label> <input type="date" id="repDeliveryDateTo" style="width: 150px;">
                         <button class="btn-filter" onclick="generateDeliveryReport()">បង្ហាញរបាយការណ៍</button>
                     </div>
-                    <table id="deliveryReportTable" style="margin-top: 10px;">
-                        <thead><tr><th>វិក្កយបត្រ</th><th>អតិថិជន/លេខទូរស័ព្ទ</th><th>ថ្ងៃត្រូវដឹកជញ្ជូន</th><th>ទីតាំង/ពេលវេលា</th><th>ទំនិញសរុប</th></tr></thead>
-                        <tbody id="deliveryReportBody">
-                            <tr><td colspan="5" style="text-align:center; color:#666;">សូមជ្រើសរើសចន្លោះកាលបរិច្ឆេទ។</td></tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table id="deliveryReportTable">
+                            <thead><tr><th>វិក្កយបត្រ</th><th>អតិថិជន/លេខទូរស័ព្ទ</th><th>ថ្ងៃត្រូវដឹកជញ្ជូន</th><th>ទីតាំង/ពេលវេលា</th><th>ទំនិញសរុប</th></tr></thead>
+                            <tbody id="deliveryReportBody">
+                                <tr><td colspan="5" style="text-align:center; color:#666;">សូមជ្រើសរើសចន្លោះកាលបរិច្ឆេទ។</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div class="section-title">💰 របាយការណ៍ទទួលកក់ និងវិក្កយបត្រ (Booking Report)</div>
@@ -433,12 +463,14 @@
                         <div class="summary-card"><h3 id="repTotalDeposit" style="color:#28a745;">$0.00</h3><p>ប្រាក់កក់ទទួលបានសរុប</p></div>
                         <div class="summary-card"><h3 id="repTotalGrand" style="color:#dc3545;">$0.00</h3><p>ទំហំលក់សរុប</p></div>
                     </div>
-                    <table id="bookingReportTable">
-                        <thead><tr><th>លេខវិក្កយបត្រ</th><th>ថ្ងៃចេញតារាង</th><th>អតិថិជន</th><th>សរុប</th><th>ប្រាក់កក់</th><th>ទំនិញសង្ខេប</th></tr></thead>
-                        <tbody id="bookingReportBody">
-                            <tr><td colspan="6" style="text-align:center; color:#666;">សូមជ្រើសរើសចន្លោះកាលបរិច្ឆេទ។</td></tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table id="bookingReportTable">
+                            <thead><tr><th>លេខវិក្កយបត្រ</th><th>ថ្ងៃចេញតារាង</th><th>អតិថិជន</th><th>សរុប</th><th>ប្រាក់កក់</th><th>ទំនិញសង្ខេប</th></tr></thead>
+                            <tbody id="bookingReportBody">
+                                <tr><td colspan="6" style="text-align:center; color:#666;">សូមជ្រើសរើសចន្លោះកាលបរិច្ឆេទ។</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -448,10 +480,12 @@
                 <div class="sub-box">
                     <p style="color:#666; font-size: 14px; margin-top:0;"><i>ផ្ទាំងនេះបង្ហាញតែវិក្កយបត្រណាដែលភ្ញៀវបាន <strong>កក់ប្រាក់រួច និង មិនទាន់ទូទាត់ចប់</strong> ប៉ុណ្ណោះ។</i></p>
                     <div class="form-group"><input type="text" id="searchOrderInput" onkeyup="searchOrders()" placeholder="🔍 ស្វែងរក ឈ្មោះអតិថិជន ឬ លេខវិក្កយបត្រ..." style="flex: 1; border: 2px solid #6f42c1;"></div>
-                    <table>
-                        <thead><tr style="background-color: #f8f9fa;"><th style="width:15%;">វិក្កយបត្រ</th><th style="width:20%;">អតិថិជន / ថ្ងៃរៀបការ</th><th style="width:65%;">តាមដានក្រុមហ៊ុនផ្គត់ផ្គង់ (Suppliers)</th></tr></thead>
-                        <tbody id="orderTrackingBody"></tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr style="background-color: #f8f9fa;"><th style="width:15%;">វិក្កយបត្រ</th><th style="width:20%;">អតិថិជន / ថ្ងៃរៀបការ</th><th style="width:65%;">តាមដានក្រុមហ៊ុនផ្គត់ផ្គង់ (Suppliers)</th></tr></thead>
+                            <tbody id="orderTrackingBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -473,22 +507,26 @@
                     </div>
                     <button class="btn-add" style="background:#343a40;" onclick="createNewUserAccount()">+ បង្កើតគណនីថ្មីឥឡូវនេះ</button>
                 </div>
-                <table>
-                    <thead><tr><th>ល.រ</th><th>គណនីអ៊ីម៉ែល (Email)</th><th>សិទ្ធិ (Role)</th><th>សកម្មភាព</th></tr></thead>
-                    <tbody id="userRolesBody"></tbody>
-                </table>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>ល.រ</th><th>គណនីអ៊ីម៉ែល (Email)</th><th>សិទ្ធិ (Role)</th><th>សកម្មភាព</th></tr></thead>
+                        <tbody id="userRolesBody"></tbody>
+                    </table>
+                </div>
             </div>
             
             <!-- ផ្ទាំងទី៩: កំណត់ត្រាសកម្មភាព -->
             <div id="log-tab" class="tab-content">
                 <h2>📝 កំណត់ត្រាសកម្មភាព (Activity Logs)</h2>
                 <div class="sub-box">
-                    <p style="color:#666; font-size: 14px; margin-top:0;"><i>ប្រព័ន្ធនឹងកត់ត្រារាល់សកម្មភាព ការកែប្រែ ឬការលុបទិន្នន័យរបស់អ្នកប្រើប្រាស់ម្នាក់ៗ។</i></p>
+                    <p style="color:#666; font-size: 14px; margin-top:0;"><i>ប្រព័ន្ធនឹងកត់ត្រារាល់សកម្មភាព ការកែប្រែ ឬការលុបទិន្នន័យរបស់អ្នកប្រើប្រាស់ម្នាក់ៗ (បង្ហាញតែ ១០០ សកម្មភាពចុងក្រោយដើម្បីឲ្យស្រាលលើទូរស័ព្ទ)។</i></p>
                     <div class="form-group"><input type="text" id="searchLogInput" onkeyup="searchLogs()" placeholder="🔍 ស្វែងរក..." style="flex: 1; border: 2px solid #ffc107;"></div>
-                    <table style="font-size: 13px;">
-                        <thead><tr style="background-color: #f8f9fa;"><th>ល.រ</th><th>កាលបរិច្ឆេទ & ម៉ោង</th><th>អ្នកប្រើប្រាស់ (User)</th><th>សកម្មភាព (Action)</th><th>ព័ត៌មានលម្អិត (Details)</th></tr></thead>
-                        <tbody id="logBody"></tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table style="font-size: 13px;">
+                            <thead><tr style="background-color: #f8f9fa;"><th>ល.រ</th><th>កាលបរិច្ឆេទ & ម៉ោង</th><th>អ្នកប្រើប្រាស់ (User)</th><th>សកម្មភាព (Action)</th><th>ព័ត៌មានលម្អិត (Details)</th></tr></thead>
+                            <tbody id="logBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             
@@ -583,7 +621,6 @@
             });
         }
 
-        // Firebase Auth State
         auth.onAuthStateChanged((user) => {
             if (user) {
                 loggedInEmail = user.email;
@@ -633,40 +670,91 @@
         function logoutUser() {
             if(confirm("តើអ្នកពិតជាចង់ចាកចេញពីប្រព័ន្ធមែនទេ?")) {
                 addLog("បានចាកចេញពីប្រព័ន្ធ (Logout)", "");
-                db.ref('chheangleng_db').off();
+                // Unsubscribe from all independent listeners
+                db.ref('chheangleng_db/items').off();
+                db.ref('chheangleng_db/quotations').off();
+                db.ref('chheangleng_db/customers').off();
+                db.ref('chheangleng_db/companyProfile').off();
+                db.ref('chheangleng_db/userRoles').off();
+                db.ref('chheangleng_db/userProfiles').off();
+                db.ref('chheangleng_db/logs').off();
                 auth.signOut();
             }
         }
 
+        /* ប្តូររបៀបទាញទិន្នន័យពី Cloud ដើម្បីអោយវាស្រាលពេលប្រើលើទូរស័ព្ទ */
+        let isFirstLoad = true;
+        let loadedCount = 0;
+
+        function checkInitialLoad() {
+            loadedCount++;
+            if(loadedCount === 7) { 
+                document.getElementById('sync-status').style.display = 'none';
+                applyPermissions();
+                refreshAllUI();
+                isFirstLoad = false;
+            }
+        }
+
+        function triggerRefresh() {
+            if(!isFirstLoad) {
+                applyPermissions();
+                refreshAllUI();
+            }
+        }
+
+        function errorCallback(error) {
+            document.getElementById('sync-status').style.display = 'none';
+            console.error("Database Error: ", error);
+        }
+
         function startDatabaseListener() {
             document.getElementById('sync-status').style.display = 'block';
-            db.ref('chheangleng_db').on('value', (snapshot) => {
-                const data = snapshot.val() || {};
-                
-                items = data.items ? Object.keys(data.items).map(k => ({...data.items[k], dbKey: k})) : [];
-                quotations = data.quotations ? Object.keys(data.quotations).map(k => ({...data.quotations[k], dbKey: k})) : [];
-                customers = data.customers ? Object.keys(data.customers).map(k => ({...data.customers[k], dbKey: k})) : [];
-                userRoles = data.userRoles || {};
-                logs = data.logs ? Object.keys(data.logs).map(k => ({...data.logs[k], dbKey: k})).sort((a,b) => new Date(b.date) - new Date(a.date)) : [];
-                userProfiles = data.userProfiles || {}; 
-                if(data.companyProfile) company = data.companyProfile;
+            loadedCount = 0;
+            isFirstLoad = true;
 
+            db.ref('chheangleng_db/items').on('value', snap => {
+                let d = snap.val() || {}; items = Object.keys(d).map(k => ({...d[k], dbKey: k}));
+                loadedCount < 7 ? checkInitialLoad() : triggerRefresh();
+            }, errorCallback);
+
+            db.ref('chheangleng_db/quotations').on('value', snap => {
+                let d = snap.val() || {}; quotations = Object.keys(d).map(k => ({...d[k], dbKey: k}));
+                loadedCount < 7 ? checkInitialLoad() : triggerRefresh();
+            }, errorCallback);
+
+            db.ref('chheangleng_db/customers').on('value', snap => {
+                let d = snap.val() || {}; customers = Object.keys(d).map(k => ({...d[k], dbKey: k}));
+                loadedCount < 7 ? checkInitialLoad() : triggerRefresh();
+            }, errorCallback);
+
+            db.ref('chheangleng_db/companyProfile').on('value', snap => {
+                company = snap.val() || { name: 'ដេប៉ូ ឈាង ឡេង', phone: '', address: '', fb: '', web: '', ig: '', logo: '', sellerName: '', signature: '' };
+                loadedCount < 7 ? checkInitialLoad() : triggerRefresh();
+            }, errorCallback);
+
+            db.ref('chheangleng_db/userRoles').on('value', snap => {
+                userRoles = snap.val() || {};
                 let sanitizedEmail = loggedInEmail.replace(/\./g, ',');
                 if(Object.keys(userRoles).length === 0 && loggedInEmail !== '') {
                     userRoles[sanitizedEmail] = 'admin';
                     db.ref(`chheangleng_db/userRoles/${sanitizedEmail}`).set('admin'); 
                 }
-                
                 currentRole = userRoles[sanitizedEmail] || 'staff';
-                document.getElementById('sync-status').style.display = 'none'; 
-                
-                applyPermissions(); 
-                refreshAllUI();
-            }, (error) => {
-                document.getElementById('sync-status').style.display = 'none';
-                alert("បញ្ហាភ្ជាប់ទិន្នន័យ (Database Error): " + error.message);
-                console.error("Database Error: ", error);
-            });
+                loadedCount < 7 ? checkInitialLoad() : triggerRefresh();
+            }, errorCallback);
+
+            db.ref('chheangleng_db/userProfiles').on('value', snap => {
+                userProfiles = snap.val() || {};
+                loadedCount < 7 ? checkInitialLoad() : triggerRefresh();
+            }, errorCallback);
+
+            // កំណត់ទាញយកតែ ១០០ សកម្មភាពចុងក្រោយ
+            db.ref('chheangleng_db/logs').orderByKey().limitToLast(100).on('value', snap => {
+                let d = snap.val() || {}; 
+                logs = Object.keys(d).map(k => ({...d[k], dbKey: k})).sort((a,b) => new Date(b.date) - new Date(a.date));
+                loadedCount < 7 ? checkInitialLoad() : triggerRefresh();
+            }, errorCallback);
         }
 
         function applyPermissions() {
@@ -776,16 +864,13 @@
             let role = document.getElementById('newRoleType').value;
             if(!email || !pass || pass.length < 6) return alert("សូមបញ្ចូល Email និងលេខសម្ងាត់ឲ្យបានត្រឹមត្រូវ (យ៉ាងតិច ៦ខ្ទង់)!");
 
-            // បង្កើត App ទី២ បណ្តោះអាសន្ន ដើម្បីកុំឲ្យពេលបង្កើតគណនីថ្មី វាលោត Logout គណនី Admin
             const secondaryApp = firebase.initializeApp(firebaseConfig, "SecondaryApp");
 
             secondaryApp.auth().createUserWithEmailAndPassword(email, pass)
                 .then((userCredential) => {
-                    // បន្ទាប់ពីបង្កើតជោគជ័យ ត្រូវ Sign out គណនីថ្មីនោះវិញភ្លាម ដើម្បីរក្សា Admin នៅដដែល
                     secondaryApp.auth().signOut();
-                    secondaryApp.delete(); // លុប App បណ្តោះអាសន្នចោលវិញ
+                    secondaryApp.delete(); 
 
-                    // រក្សាទុកសិទ្ធិ (Role) ចូលទៅក្នុង Database
                     let key = email.replace(/\./g, ',');
                     db.ref(`chheangleng_db/userRoles/${key}`).set(role);
                     addLog("ផ្តល់សិទ្ធិគណនី", `Email: ${email}, សិទ្ធិ: ${role}`);
@@ -810,7 +895,7 @@
         function renderLogsTable() {
             let b = document.getElementById("logBody");
             b.innerHTML = "";
-            let limit = Math.min(logs.length, 300); 
+            let limit = Math.min(logs.length, 100); // Only loop through what is available (max 100)
             for(let i=0; i<limit; i++) {
                 let l = logs[i];
                 let d = new Date(l.date).toLocaleString('en-GB'); 
@@ -883,7 +968,7 @@
             body.innerHTML = ""; 
             items.forEach((item, index) => { 
                 let delBtn = currentRole === 'admin' ? `<button class="btn-danger" onclick="deleteItem(${index})">❌</button>` : '';
-                body.innerHTML += `<tr><td>${index+1}</td><td><a href="javascript:void(0)" onclick="editItem(${index})" style="color: #007bff; font-weight: bold;">${escapeHTML(item.code||'-')}</a></td><td>${escapeHTML(item.cat||'-')}</td><td>${escapeHTML(item.name)}</td><td>$${item.cost}</td><td>$${item.price}</td><td><button class="btn-edit" onclick="editItem(${index})">កែ</button> ${delBtn}</td></tr>`; 
+                body.innerHTML += `<tr><td>${index+1}</td><td><a href="javascript:void(0)" onclick="editItem(${index})" style="color: #007bff; font-weight: bold;">${escapeHTML(item.code||'-')}</a></td><td>${escapeHTML(item.cat||'-')}</td><td>${escapeHTML(item.name)}</td><td>$${item.cost}</td><td>$${item.price}</td><td class="nowrap"><button class="btn-edit" onclick="editItem(${index})">កែ</button> ${delBtn}</td></tr>`; 
             }); 
             let cats = [...new Set(items.map(i => i.cat).filter(c => c))]; 
             document.getElementById("catList").innerHTML = cats.map(c => `<option value="${escapeHTML(c)}">`).join(''); 
@@ -979,11 +1064,11 @@
                     invoiceBadge = `<a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color: #007bff; font-weight: bold;">${escapeHTML(q.quoteNo)}</a>`; 
                     if (q.docReceived) docInfo = q.docNote || "បានទទួល"; 
                     let dep = parseFloat(q.deposit) || 0; 
-                    if (dep > 0) { hasDeposit = "yes"; statusBadge = `<span style="background:#28a745; color:white; padding:4px; font-size:12px;">បានកក់: $${dep.toFixed(2)}</span>`; depositDate = formatKhmerDate(q.issueDate || q.date); } else { statusBadge = `<span style="background:#ffc107; padding:4px; font-size:12px;">មិនទាន់កក់</span>`; } 
+                    if (dep > 0) { hasDeposit = "yes"; statusBadge = `<span style="background:#28a745; color:white; padding:4px; font-size:12px; display:inline-block;">បានកក់: $${dep.toFixed(2)}</span>`; depositDate = formatKhmerDate(q.issueDate || q.date); } else { statusBadge = `<span style="background:#ffc107; padding:4px; font-size:12px; display:inline-block;">មិនទាន់កក់</span>`; } 
                 } else { statusBadge = `<span style="color:gray; font-size:12px;">គ្មាន Quote</span>`; } 
                 
                 let delBtn = currentRole === 'admin' ? `<button class="btn-danger" onclick="deleteCustomer(${index})">❌</button>` : '';
-                body.innerHTML += `<tr data-deposit="${hasDeposit}"><td>${index+1}</td><td>${escapeHTML(c.code)}</td><td style="font-weight:bold; color:#007bff;">${escapeHTML(c.name)}</td><td>${escapeHTML(phones)}</td><td>${invoiceBadge}</td><td>${wedDate}</td><td>${escapeHTML(docInfo)}</td><td>${depositDate}</td><td>${statusBadge}</td><td style="text-align:center;"><input type="checkbox" onchange="toggleFreeItem(${index})" ${c.receivedFreeItem?'checked':''}></td><td><button class="btn-edit" onclick="editCustomer(${index})">កែ</button> ${delBtn}</td></tr>`; 
+                body.innerHTML += `<tr data-deposit="${hasDeposit}"><td>${index+1}</td><td>${escapeHTML(c.code)}</td><td style="font-weight:bold; color:#007bff; min-width: 150px;">${escapeHTML(c.name)}</td><td>${escapeHTML(phones)}</td><td>${invoiceBadge}</td><td>${wedDate}</td><td>${escapeHTML(docInfo)}</td><td>${depositDate}</td><td>${statusBadge}</td><td style="text-align:center;"><input type="checkbox" onchange="toggleFreeItem(${index})" ${c.receivedFreeItem?'checked':''}></td><td class="nowrap"><button class="btn-edit" onclick="editCustomer(${index})">កែ</button> ${delBtn}</td></tr>`; 
             }); 
         }
         
@@ -1165,12 +1250,12 @@
                 let doc = q.docReceived ? (q.docNote||"បានទទួល") : "-"; 
                 let delBtn = currentRole === 'admin' ? `<button class="btn-danger" onclick="deleteQuotation(${i})" style="margin-left: 5px; padding: 6px 5px;">❌</button>` : '';
 
-                b.innerHTML += `<tr style="${rs}"><td><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color:#007bff; font-weight:bold;">${escapeHTML(q.quoteNo)}</a> ${ib}</td><td>${q.issueDate||q.date||''}</td><td>${escapeHTML(q.customer)}</td><td style="${dc}">${q.wedDate?formatKhmerDate(q.wedDate):'-'}</td><td style="color:#0056b3;">${escapeHTML(doc)}</td><td>$${(q.grandTotal||0).toFixed(2)}</td><td style="color:green;">$${(q.deposit||0).toFixed(2)}</td><td style="text-align:center;"><input type="checkbox" onchange="togglePaid(${i})" ${q.isPaid?'checked':''}></td><td><button class="btn-edit" onclick="editQuotation(${i})">កែ</button> <button class="btn-add" onclick="viewPrint(${i})">Print</button> ${delBtn}</td></tr>`; 
+                b.innerHTML += `<tr style="${rs}"><td><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color:#007bff; font-weight:bold;">${escapeHTML(q.quoteNo)}</a> ${ib}</td><td>${q.issueDate||q.date||''}</td><td>${escapeHTML(q.customer)}</td><td style="${dc}">${q.wedDate?formatKhmerDate(q.wedDate):'-'}</td><td style="color:#0056b3;">${escapeHTML(doc)}</td><td>$${(q.grandTotal||0).toFixed(2)}</td><td style="color:green;">$${(q.deposit||0).toFixed(2)}</td><td style="text-align:center;"><input type="checkbox" onchange="togglePaid(${i})" ${q.isPaid?'checked':''}></td><td class="nowrap"><button class="btn-edit" onclick="editQuotation(${i})">កែ</button> <button class="btn-add" onclick="viewPrint(${i})">Print</button> ${delBtn}</td></tr>`; 
             } 
         }
         function searchQuotation() { let k = document.getElementById("searchQuote").value.toLowerCase(); let r = document.getElementById("dbListBody").getElementsByTagName("tr"); for(let i=0; i<r.length; i++) r[i].style.display = r[i].innerText.toLowerCase().includes(k) ? "" : "none"; }
 
-        function renderOrderTrackingTable() { let b = document.getElementById("orderTrackingBody"); b.innerHTML = ""; let c = 0; quotations.forEach((q, i) => { if (parseFloat(q.deposit)>0 && !q.isPaid) { c++; let sr = (q.suppliers||[]).map((s, si) => `<tr><td style="border:none; border-bottom:1px solid #eee;"><input type="text" placeholder="ក្រុមហ៊ុន..." value="${escapeHTML(s.name||'')}" onchange="updateSupplier(${i}, ${si}, 'name', this.value)" style="width:100%; font-size:12px;"></td><td style="border:none; border-bottom:1px solid #eee;"><input type="checkbox" onchange="updateSupplier(${i}, ${si}, 'doc', this.checked)" ${s.doc?'checked':''}> ឯកសារ</td><td style="border:none; border-bottom:1px solid #eee;"><input type="checkbox" onchange="updateSupplier(${i}, ${si}, 'goods', this.checked)" ${s.goods?'checked':''}> ទំនិញ</td><td style="border:none; border-bottom:1px solid #eee;"><input type="text" placeholder="ថែម..." value="${escapeHTML(s.reward||'')}" onchange="updateSupplier(${i}, ${si}, 'reward', this.value)" style="width:100%; font-size:12px;"></td><td style="border:none; border-bottom:1px solid #eee;"><button class="btn-danger" style="padding:2px 5px;" onclick="removeSupplier(${i}, ${si})">❌</button></td></tr>`).join(''); b.innerHTML += `<tr><td style="font-weight:bold; vertical-align: top;"><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color: #007bff;">${escapeHTML(q.quoteNo)}</a></td><td style="vertical-align: top;"><span style="color:#007bff; font-weight:bold;">${escapeHTML(q.customer)}</span><br><small style="color:#6f42c1;">ការ: ${q.wedDate?formatKhmerDate(q.wedDate):'-'}</small></td><td style="padding: 0;"><table style="width:100%; border:none; margin:0; background:transparent;"><tbody>${sr}</tbody></table><div style="padding: 5px 10px; background: #f8f9fa; border-top: 1px dashed #ccc;"><button class="btn-edit" onclick="addSupplier(${i})" style="font-size:12px;">➕ បន្ថែមក្រុមហ៊ុន</button></div></td></tr>`; } }); if(c===0) b.innerHTML = `<tr><td colspan="3" style="text-align:center; color:gray;">គ្មានវិក្កយបត្រកំពុងរង់ចាំតាមដានទេ</td></tr>`; }
+        function renderOrderTrackingTable() { let b = document.getElementById("orderTrackingBody"); b.innerHTML = ""; let c = 0; quotations.forEach((q, i) => { if (parseFloat(q.deposit)>0 && !q.isPaid) { c++; let sr = (q.suppliers||[]).map((s, si) => `<tr><td style="border:none; border-bottom:1px solid #eee;"><input type="text" placeholder="ក្រុមហ៊ុន..." value="${escapeHTML(s.name||'')}" onchange="updateSupplier(${i}, ${si}, 'name', this.value)" style="width:100%; font-size:12px;"></td><td style="border:none; border-bottom:1px solid #eee; white-space:nowrap;"><input type="checkbox" onchange="updateSupplier(${i}, ${si}, 'doc', this.checked)" ${s.doc?'checked':''}> ឯកស</td><td style="border:none; border-bottom:1px solid #eee; white-space:nowrap;"><input type="checkbox" onchange="updateSupplier(${i}, ${si}, 'goods', this.checked)" ${s.goods?'checked':''}> ទំនិញ</td><td style="border:none; border-bottom:1px solid #eee;"><input type="text" placeholder="ថែម..." value="${escapeHTML(s.reward||'')}" onchange="updateSupplier(${i}, ${si}, 'reward', this.value)" style="width:100%; font-size:12px;"></td><td style="border:none; border-bottom:1px solid #eee;"><button class="btn-danger" style="padding:2px 5px;" onclick="removeSupplier(${i}, ${si})">❌</button></td></tr>`).join(''); b.innerHTML += `<tr><td style="font-weight:bold; vertical-align: top;"><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color: #007bff;">${escapeHTML(q.quoteNo)}</a></td><td style="vertical-align: top;"><span style="color:#007bff; font-weight:bold;">${escapeHTML(q.customer)}</span><br><small style="color:#6f42c1;">ការ: ${q.wedDate?formatKhmerDate(q.wedDate):'-'}</small></td><td style="padding: 0;"><table style="width:100%; border:none; margin:0; background:transparent;"><tbody>${sr}</tbody></table><div style="padding: 5px 10px; background: #f8f9fa; border-top: 1px dashed #ccc;"><button class="btn-edit" onclick="addSupplier(${i})" style="font-size:12px;">➕ បន្ថែមក្រុមហ៊ុន</button></div></td></tr>`; } }); if(c===0) b.innerHTML = `<tr><td colspan="3" style="text-align:center; color:gray;">គ្មានវិក្កយបត្រកំពុងរង់ចាំតាមដានទេ</td></tr>`; }
         function addSupplier(i) { 
             let key = quotations[i].dbKey;
             let currentSuppliers = quotations[i].suppliers||[]; 
