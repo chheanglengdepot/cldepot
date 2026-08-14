@@ -298,7 +298,7 @@
             <div id="quote-tab" class="tab-content">
                 <h2 id="quoteTitle">បង្កើត Quotation </h2>
                 <div class="form-row">
-                    <div class="form-col"><label>លេខវិក្កយបត្រ:</label><input type="text" id="quoteNo" readonly style="background:#e9ecef;"></div>
+                    <div class="form-col"><label>លេខវិក្កយបត្រ (Auto):</label><input type="text" id="quoteNo" placeholder="Auto (បង្កើតស្វ័យប្រវត្តិ)" readonly style="background:#e9ecef;"></div>
                     <div class="form-col"><label>ថ្ងៃខែចេញតារាង (ឬថ្ងៃកក់) :</label><input type="date" id="quoteIssueDate"></div>
                     <div class="form-col"><label>ថ្ងៃខែផុតកំណត់:</label><input type="date" id="quoteDueDate"></div>
                 </div>
@@ -541,7 +541,7 @@
                 <div class="sub-box" style="max-width: 600px;">
                     <div class="form-group">
                         <label>ឈ្មោះរបស់អ្នក (បង្ហាញលើវិក្កយបត្រ):</label>
-                        <input type="text" id="myProfileName" placeholder="ឧ. ឈ្មោះ">
+                        <input type="text" id="myProfileName" placeholder="ឧ. នី និមល">
                     </div>
                     <div class="form-group">
                         <label>ហត្ថលេខារបស់អ្នក (សាញេ):</label>
@@ -595,6 +595,13 @@
     <script>
         $(document).ready(function() {
             $('.select2').select2({ width: '100%' });
+            
+            // ការពារការជាប់គាំងផ្ទាំង Print នៅពេលប្រើកម្មវិធី Print ធម្មតា
+            window.addEventListener('afterprint', function() {
+                if(document.getElementById('print-tab').classList.contains('active')) {
+                    showTab('db-tab');
+                }
+            });
         });
 
         const firebaseConfig = {
@@ -1049,7 +1056,7 @@
         
         function resetCustomerForm() { 
             currentEditCustomerIndex = -1; 
-            document.getElementById("cusCode").value = "Auto (បង្កើតស្វ័យប្រវត្តិ)"; // Changed to prevent confusion
+            document.getElementById("cusCode").value = "Auto (បង្កើតស្វ័យប្រវត្តិ)"; 
             ["cusList_Name", "cusList_CoupleName", "cusList_Phone1", "cusList_Phone2", "cusList_Email", "cusList_Note"].forEach(id => document.getElementById(id).value = ''); 
             document.getElementById("btnSaveCustomer").innerText = "រក្សាទុក"; 
         }
@@ -1071,7 +1078,6 @@
                 db.ref(`chheangleng_db/customers/${key}`).update(cusData);
                 addLog("កែប្រែអតិថិជន", `កូដ: ${cusCode}, ឈ្មោះ: ${name}`); 
             } else { 
-                // Generate code right at the moment of saving to avoid duplicates
                 cusCode = generateCustomerCode();
                 cusData.code = cusCode;
                 db.ref('chheangleng_db/customers').push(cusData);
@@ -1091,7 +1097,6 @@
             let body = document.getElementById("customerListBody"); 
             body.innerHTML = ""; 
             let rowNum = 1;
-            // រង្វិលជុំថយក្រោយ ដើម្បីបង្ហាញអ្នកទើបបង្កើតថ្មីៗឲ្យលោតមកលើគេ
             for (let index = customers.length - 1; index >= 0; index--) {
                 let c = customers[index];
                 let phones = c.phone1 || ''; if(c.phone2) phones += " / " + c.phone2; 
@@ -1141,7 +1146,7 @@
         
         function resetQuoteForm() { 
             currentEditQuoteIndex = -1; currentMorningItems = []; currentEveningItems = []; 
-            document.getElementById("quoteNo").value = generateInvoiceNo(); 
+            document.getElementById("quoteNo").value = "Auto (បង្កើតស្វ័យប្រវត្តិ)"; // Changed here
             let t = new Date().toISOString().split('T')[0]; 
             document.getElementById("quoteIssueDate").value = t; document.getElementById("quoteDueDate").value = t; 
             
@@ -1203,7 +1208,7 @@
             let currentKey = loggedInEmail.replace(/\./g, ','); 
             
             let qData = { 
-                quoteNo: currentEditQuoteIndex===-1?generateInvoiceNo():document.getElementById("quoteNo").value, 
+                quoteNo: currentEditQuoteIndex === -1 ? generateInvoiceNo() : document.getElementById("quoteNo").value, 
                 issueDate: document.getElementById("quoteIssueDate").value, 
                 dueDate: document.getElementById("quoteDueDate").value, 
                 customer: cus, 
@@ -1325,7 +1330,7 @@
             let h = `<table class="quote-print-table"><tbody>`; 
             h += `<tr style="border-top: 2px solid #000;"><th colspan="2" style="text-align:left;">ទំនិញព្រឹក+ហែរជំនូន+បាយថ្ងៃ</th><th class="bg-yellow nowrap">តុ: ${q.morningTables||0}</th><th class="t-center nowrap">ចំនួន</th><th class="t-center nowrap">ឯកតា</th><th class="t-center nowrap">ចំណាយ</th><th class="t-center nowrap">សរុប</th></tr>`; 
             
-            let maxM = Math.max(mI.length, 8);
+            let maxM = Math.max(mI.length, 6);
             for(let i=0; i<maxM; i++) { 
                 if(i<mI.length) { h += `<tr class="dotted-row"><td colspan="3">${escapeHTML(mI[i].name)}</td><td class="t-center">${mI[i].qty}</td><td class="t-center">${escapeHTML(mI[i].unit)}</td><td>$${mI[i].price.toFixed(2)}</td><td>$${mI[i].total.toFixed(2)}</td></tr>`; } else { h += `<tr class="dotted-row"><td colspan="3" style="color:transparent;">-</td><td></td><td></td><td></td><td></td></tr>`; } 
             } 
@@ -1333,7 +1338,7 @@
             h += `<tr class="bg-grey"><td colspan="6">សរុបការចំណាយនៅផ្ទះ:</td><td>$${(q.subTotalMorning||0).toFixed(2)}</td></tr><tr><td colspan="7" style="border:none; height: 2px;"></td></tr>`; 
             h += `<tr style="border-top: 2px solid #000;"><th colspan="2" style="text-align:left;">ទំនិញភ្ញៀវពេលល្ងាច</th><th class="bg-yellow nowrap">តុ: ${q.eveningTables||0}</th><th class="t-center nowrap">ចំនួន</th><th class="t-center nowrap">ឯកតា</th><th class="t-center nowrap">ចំណាយ</th><th class="t-center nowrap">សរុប</th></tr>`; 
             
-            let maxE = Math.max(eI.length, 8);
+            let maxE = Math.max(eI.length, 9);
             for(let i=0; i<maxE; i++) { 
                 if(i<eI.length) { h += `<tr class="dotted-row"><td colspan="3">${escapeHTML(eI[i].name)}</td><td class="t-center">${eI[i].qty}</td><td class="t-center">${escapeHTML(eI[i].unit)}</td><td>$${eI[i].price.toFixed(2)}</td><td>$${eI[i].total.toFixed(2)}</td></tr>`; } else { h += `<tr class="dotted-row"><td colspan="3" style="color:transparent;">-</td><td></td><td></td><td></td><td></td></tr>`; } 
             } 
@@ -1344,7 +1349,7 @@
             let savedByKey = q.savedBy || loggedInEmail.replace(/\./g, ',');
             let printProf = userProfiles[savedByKey] || {};
             let printSig = printProf.signature || company.signature || '';
-            let printName = printProf.name || company.sellerName || 'ឈ្មោះ';
+            let printName = printProf.name || company.sellerName || 'នី និមល';
             
             h += `<div class="keep-together">
                     <table class="quote-print-table" style="margin-top:0;">
@@ -1395,6 +1400,9 @@
             setTimeout(function() {
                 printWindow.focus();
                 printWindow.print();
+                
+                // បន្ថែមកូដនេះ ដើម្បីអោយលោតមកផ្ទាំងបញ្ជី (Database) វិញដោយស្វ័យប្រវត្តិ
+                showTab('db-tab');
             }, 500);
         }
 
