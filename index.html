@@ -598,9 +598,7 @@
             
             // ការពារការជាប់គាំងផ្ទាំង Print នៅពេលប្រើកម្មវិធី Print ធម្មតា
             window.addEventListener('afterprint', function() {
-                if(document.getElementById('print-tab').classList.contains('active')) {
-                    showTab('db-tab');
-                }
+                showTab('db-tab'); // ត្រឡប់ទៅបញ្ជីស្វ័យប្រវត្តិ
             });
         });
 
@@ -1146,7 +1144,7 @@
         
         function resetQuoteForm() { 
             currentEditQuoteIndex = -1; currentMorningItems = []; currentEveningItems = []; 
-            document.getElementById("quoteNo").value = "Auto (បង្កើតស្វ័យប្រវត្តិ)"; // Changed here
+            document.getElementById("quoteNo").value = "Auto (បង្កើតស្វ័យប្រវត្តិ)"; 
             let t = new Date().toISOString().split('T')[0]; 
             document.getElementById("quoteIssueDate").value = t; document.getElementById("quoteDueDate").value = t; 
             
@@ -1384,26 +1382,21 @@
         }
 
         function mobilePrint() {
-            let printArea = document.getElementById('actualPrintArea').innerHTML;
-            let originalTitle = document.getElementById("pr_invNo").innerText || "Invoice";
-            let styles = document.querySelector('style').innerHTML;
+            // រក្សាទុកឈ្មោះដើមរបស់វិបសាយ
+            let originalTitle = document.title;
+            let invNo = document.getElementById("pr_invNo").innerText || "Invoice";
+            
+            // ប្តូរឈ្មោះឯកសារជាបណ្តោះអាសន្ន ដើម្បីពេល Share ទៅ Telegram ជាប់ឈ្មោះ File ជាលេខវិក្កយបត្រជានិច្ច
+            document.title = invNo; 
 
-            let printWindow = window.open('', '_blank', 'width=800,height=600');
-            printWindow.document.write('<html><head><title>' + escapeHTML(originalTitle) + '</title>');
-            printWindow.document.write('<style>' + styles + '</style>');
-            printWindow.document.write('<style>body{background:white; padding:0; margin:0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}</style>');
-            printWindow.document.write('</head><body>');
-            printWindow.document.write(printArea);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-
+            // ប្រើមុខងារ Print របស់ Browser ផ្ទាល់ (មិនបើក Tab ថ្មីទេ ព្រោះវាធ្វើឲ្យមុខងារ Share រអាក់រអួល)
+            window.print();
+            
+            // បន្ទាប់ពីផ្ទាំង Share/Print ត្រូវបានបិទ វាពន្យារពេល ១វិនាទី រួចត្រឡប់ទៅ Database ស្វ័យប្រវត្តិ
             setTimeout(function() {
-                printWindow.focus();
-                printWindow.print();
-                
-                // បន្ថែមកូដនេះ ដើម្បីអោយលោតមកផ្ទាំងបញ្ជី (Database) វិញដោយស្វ័យប្រវត្តិ
-                showTab('db-tab');
-            }, 500);
+                document.title = originalTitle; // ប្រគល់ឈ្មោះដើមវិញ
+                showTab('db-tab'); // លោតទៅបញ្ជី Database វិញ
+            }, 1000);
         }
 
         function generatePendingQuoteReport() { let fD = document.getElementById("repPendingDateFrom").value; let tD = document.getElementById("repPendingDateTo").value; let b = document.getElementById("pendingQuoteReportBody"); let h = "", c = 0; quotations.forEach(q => { let dp = parseFloat(q.deposit)||0; if(dp<=0) { let cd = q.issueDate||q.date; if(cd>=fD && cd<=tD) { c++; h += `<tr><td><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color:#007bff;">${escapeHTML(q.quoteNo)}</a></td><td>${cd}</td><td>${escapeHTML(q.customer)}</td><td>${escapeHTML(q.phone)}</td><td style="color:red;">$${(q.grandTotal||0).toFixed(2)}</td></tr>`; } } }); b.innerHTML = c===0 ? `<tr><td colspan="5" style="text-align:center;">គ្មានទិន្នន័យ!</td></tr>` : h; }
