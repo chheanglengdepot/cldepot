@@ -238,7 +238,7 @@
                     <div><button class="btn-filter" style="background: #00796b;" onclick="exportItemsTemplate()">📤 ទាញគំរូ Excel</button></div>
                 </div>
                 <div class="form-group" style="align-items: flex-end;">
-                    <div style="width: 130px;"><label>លេខកូដ (Auto)</label><input type="text" id="itemCode" placeholder="Auto (ស្វ័យប្រវត្តិ)" readonly style="background:#e9ecef;"></div>
+                    <div style="width: 170px;"><label>លេខកូដ (Auto)</label><input type="text" id="itemCode" value="Auto (បង្កើតស្វ័យប្រវត្តិ)" readonly style="background:#e9ecef;"></div>
                     <div style="flex: 1; min-width: 150px;"><label>ប្រភេទ</label><input type="text" id="itemCat" list="catList" placeholder="ឧ. ស្រាបៀរ"><datalist id="catList"></datalist></div>
                     <div style="flex: 2; min-width: 200px;"><label>ឈ្មោះផលិតផល</label><input type="text" id="itemName"></div>
                     <div style="width: 120px;"><label>តម្លៃដើម</label><input type="number" id="itemCost"></div>
@@ -263,7 +263,7 @@
                 <h2>បញ្ជីអតិថិជន (Customer List)</h2>
                 <div class="sub-box">
                     <div class="form-row">
-                        <div class="form-col"><label>លេខកូដ (Auto)</label><input type="text" id="cusCode" placeholder="Auto (បង្កើតស្វ័យប្រវត្តិ)" readonly style="background:#e9ecef;"></div>
+                        <div class="form-col"><label>លេខកូដ (Auto)</label><input type="text" id="cusCode" value="Auto (បង្កើតស្វ័យប្រវត្តិ)" readonly style="background:#e9ecef;"></div>
                         <div class="form-col"><label>ឈ្មោះអតិថិជន <span style="color:red;">*</span></label><input type="text" id="cusList_Name"></div>
                         <div class="form-col"><label>ឈ្មោះគូស្វាមីភរិយា</label><input type="text" id="cusList_CoupleName"></div>
                     </div>
@@ -298,7 +298,7 @@
             <div id="quote-tab" class="tab-content">
                 <h2 id="quoteTitle">បង្កើត Quotation </h2>
                 <div class="form-row">
-                    <div class="form-col"><label>លេខវិក្កយបត្រ (Auto):</label><input type="text" id="quoteNo" placeholder="Auto (បង្កើតស្វ័យប្រវត្តិ)" readonly style="background:#e9ecef;"></div>
+                    <div class="form-col"><label>លេខវិក្កយបត្រ (Auto):</label><input type="text" id="quoteNo" value="Auto (បង្កើតស្វ័យប្រវត្តិ)" readonly style="background:#e9ecef;"></div>
                     <div class="form-col"><label>ថ្ងៃខែចេញតារាង (ឬថ្ងៃកក់) :</label><input type="date" id="quoteIssueDate"></div>
                     <div class="form-col"><label>ថ្ងៃខែផុតកំណត់:</label><input type="date" id="quoteDueDate"></div>
                 </div>
@@ -478,7 +478,7 @@
                 </div>
             </div>
 
-            <!-- ផ្ទាំងទី៧: តាមដានការបញ្ជាទិញ (UI ត្រូវបានរៀបចំស្អាត និងកែអក្ខរាវិរុទ្ធ) -->
+            <!-- ផ្ទាំងទី៧: តាមដានការបញ្ជាទិញ -->
             <div id="order-tab" class="tab-content">
                 <h2>📦 តាមដានការបញ្ជាទិញទំនិញពីក្រុមហ៊ុន (Multi-Supplier Order Tracking)</h2>
                 <div class="sub-box">
@@ -988,7 +988,6 @@
 
         function showTab(tabId) { document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active')); document.querySelectorAll('.nav button').forEach(btn => btn.classList.remove('active')); document.getElementById(tabId).classList.add('active'); document.querySelectorAll('.nav button').forEach(btn => { if(btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabId)) { btn.classList.add('active'); } }); }
 
-        // បង្កើតលេខកូដទំនិញថ្មីដោយស្វ័យប្រវត្តិ
         function generateAutoItemCode() { 
             let max = 0; 
             items.forEach(item => { 
@@ -1050,7 +1049,7 @@
         function resetItemForm() { 
             currentEditItemIndex = -1; 
             ["itemCat","itemName","itemCost","itemPrice"].forEach(id=>document.getElementById(id).value=''); 
-            document.getElementById("itemCode").value = generateAutoItemCode();
+            document.getElementById("itemCode").value = "Auto (បង្កើតស្វ័យប្រវត្តិ)";
             document.getElementById("btnSaveItem").innerText = "រក្សាទុក"; 
         }
         
@@ -1066,7 +1065,7 @@
             document.getElementById("filterCategory").innerHTML = `<option value="">-- ទាំងអស់ --</option>` + cats.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join(''); 
             
             if (currentEditItemIndex === -1) {
-                document.getElementById("itemCode").value = generateAutoItemCode();
+                document.getElementById("itemCode").value = "Auto (បង្កើតស្វ័យប្រវត្តិ)";
             }
         }
         
@@ -1525,9 +1524,62 @@
             }, 300);
         }
 
-        function generatePendingQuoteReport() { let fD = document.getElementById("repPendingDateFrom").value; let tD = document.getElementById("repPendingDateTo").value; let b = document.getElementById("pendingQuoteReportBody"); let h = "", c = 0; quotations.forEach(q => { let dp = parseFloat(q.deposit)||0; if(dp<=0) { let cd = q.issueDate||q.date; if(cd>=fD && cd<=tD) { c++; h += `<tr><td><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color:#007bff;">${escapeHTML(q.quoteNo)}</a></td><td>${cd}</td><td>${escapeHTML(q.customer)}</td><td>${escapeHTML(q.phone)}</td><td style="color:red;">$${(q.grandTotal||0).toFixed(2)}</td></tr>`; } } }); b.innerHTML = c===0 ? `<tr><td colspan="5" style="text-align:center;">គ្មានទិន្នន័យ!</td></tr>` : h; }
-        function generateDeliveryReport() { let fD = document.getElementById("repDeliveryDateFrom").value; let tD = document.getElementById("repDeliveryDateTo").value; let b = document.getElementById("deliveryReportBody"); let h = "", c = 0; quotations.forEach(q => { let dp = parseFloat(q.deposit)||0; if(dp<=0 || q.isPaid) return; if(q.delDate1>=fD && q.delDate1<=tD) { c++; let iL = (q.morningItems||q.items||[]).map(i=>`<li>${escapeHTML(i.name)}: ${i.qty}</li>`).join(""); h += `<tr><td>${escapeHTML(q.quoteNo)}</td><td>${escapeHTML(q.customer)}</td><td style="color:green;">${q.delDate1}</td><td style="color:red;">${escapeHTML(q.delLoc1)} [ព្រឹក]</td><td><ul>${iL}</ul></td></tr>`; } if(q.delDate2>=fD && q.delDate2<=tD) { c++; let iL = (q.eveningItems||[]).map(i=>`<li>${escapeHTML(i.name)}: ${i.qty}</li>`).join(""); h += `<tr><td>${escapeHTML(q.quoteNo)}</td><td>${escapeHTML(q.customer)}</td><td style="color:green;">${q.delDate2}</td><td style="color:red;">${escapeHTML(q.delLoc2)} [ល្ងាច]</td><td><ul>${iL}</ul></td></tr>`; } }); b.innerHTML = c===0 ? `<tr><td colspan="5" style="text-align:center;">គ្មានការដឹកជញ្ជូន!</td></tr>` : h; }
-        function generateBookingReport() { let fD = document.getElementById("repBookingDateFrom").value; let tD = document.getElementById("repBookingDateTo").value; let tI = 0, tDp = 0, tG = 0, h = ""; quotations.forEach(q => { let dp = parseFloat(q.deposit)||0; if(dp<=0 || q.isPaid) return; let cd = q.issueDate||q.date; if(cd>=fD && cd<=tD) { tI++; tDp+=dp; tG+=parseFloat(q.grandTotal||0); h += `<tr><td>${escapeHTML(q.quoteNo)}</td><td>${cd}</td><td>${escapeHTML(q.customer)}</td><td>$${(q.grandTotal||0).toFixed(2)}</td><td style="color:green;">$${dp.toFixed(2)}</td><td>-</td></tr>`; } }); document.getElementById("repTotalInv").innerText = tI; document.getElementById("repTotalDeposit").innerText = "$"+tDp.toFixed(2); document.getElementById("repTotalGrand").innerText = "$"+tG.toFixed(2); document.getElementById("bookingReportBody").innerHTML = tI>0 ? h : `<tr><td colspan="6" style="text-align:center;">គ្មានទិន្នន័យ!</td></tr>`; }
+        function generatePendingQuoteReport() { let fD = document.getElementById("repPendingDateFrom").value; let tD = document.getElementById("repPendingDateTo").value; let b = document.getElementById("pendingQuoteReportBody"); let h = "", c = 0; quotations.forEach(q => { let dp = parseFloat(q.deposit)||0; if(dp<=0) { let cd = q.issueDate||q.date; if(cd>=fD && cd<=tD) { c++; h += `<tr><td><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color:#007bff; font-weight:bold;">${escapeHTML(q.quoteNo)}</a></td><td>${cd}</td><td>${escapeHTML(q.customer)}</td><td>${escapeHTML(q.phone)}</td><td style="color:red;">$${(q.grandTotal||0).toFixed(2)}</td></tr>`; } } }); b.innerHTML = c===0 ? `<tr><td colspan="5" style="text-align:center;">គ្មានទិន្នន័យ!</td></tr>` : h; }
+        
+        function generateDeliveryReport() { 
+            let fD = document.getElementById("repDeliveryDateFrom").value; 
+            let tD = document.getElementById("repDeliveryDateTo").value; 
+            let b = document.getElementById("deliveryReportBody"); 
+            let h = "", c = 0; 
+            quotations.forEach(q => { 
+                let dp = parseFloat(q.deposit)||0; 
+                if(dp<=0 || q.isPaid) return; 
+                if(q.delDate1>=fD && q.delDate1<=tD) { 
+                    c++; 
+                    let iL = (q.morningItems||q.items||[]).map(i=>`<li>${escapeHTML(i.name)}: ${i.qty} ${escapeHTML(i.unit)}</li>`).join(""); 
+                    h += `<tr><td><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color:#007bff; font-weight:bold;">${escapeHTML(q.quoteNo)}</a></td><td>${escapeHTML(q.customer)}</td><td style="color:green;">${q.delDate1}</td><td style="color:red;">${escapeHTML(q.delLoc1)} [ព្រឹក]</td><td><ul style="margin:0; padding-left:15px; font-size:12px;">${iL}</ul></td></tr>`; 
+                } 
+                if(q.delDate2>=fD && q.delDate2<=tD) { 
+                    c++; 
+                    let iL = (q.eveningItems||[]).map(i=>`<li>${escapeHTML(i.name)}: ${i.qty} ${escapeHTML(i.unit)}</li>`).join(""); 
+                    h += `<tr><td><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color:#007bff; font-weight:bold;">${escapeHTML(q.quoteNo)}</a></td><td>${escapeHTML(q.customer)}</td><td style="color:green;">${q.delDate2}</td><td style="color:red;">${escapeHTML(q.delLoc2)} [ល្ងាច]</td><td><ul style="margin:0; padding-left:15px; font-size:12px;">${iL}</ul></td></tr>`; 
+                } 
+            }); 
+            b.innerHTML = c===0 ? `<tr><td colspan="5" style="text-align:center;">គ្មានការដឹកជញ្ជូន!</td></tr>` : h; 
+        }
+        
+        function generateBookingReport() { 
+            let fD = document.getElementById("repBookingDateFrom").value; 
+            let tD = document.getElementById("repBookingDateTo").value; 
+            let tI = 0, tDp = 0, tG = 0, h = ""; 
+            quotations.forEach(q => { 
+                let dp = parseFloat(q.deposit)||0; 
+                if(dp<=0 || q.isPaid) return; 
+                let cd = q.issueDate||q.date; 
+                if(cd>=fD && cd<=tD) { 
+                    tI++; tDp+=dp; tG+=parseFloat(q.grandTotal||0); 
+                    
+                    let allItems = [...(q.morningItems||q.items||[]), ...(q.eveningItems||[])];
+                    let itemsHTML = allItems.length > 0 
+                        ? `<ul style="margin:0; padding-left:15px; font-size:13px; text-align:left;">` + allItems.map(i => `<li>${escapeHTML(i.name)}: ${i.qty} ${escapeHTML(i.unit)} (x $${i.price})</li>`).join("") + `</ul>`
+                        : "-";
+
+                    h += `<tr>
+                            <td><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color:#007bff; font-weight:bold;">${escapeHTML(q.quoteNo)}</a></td>
+                            <td>${cd}</td>
+                            <td>${escapeHTML(q.customer)}</td>
+                            <td>$${(q.grandTotal||0).toFixed(2)}</td>
+                            <td style="color:green;">$${dp.toFixed(2)}</td>
+                            <td>${itemsHTML}</td>
+                          </tr>`; 
+                } 
+            }); 
+            document.getElementById("repTotalInv").innerText = tI; 
+            document.getElementById("repTotalDeposit").innerText = "$"+tDp.toFixed(2); 
+            document.getElementById("repTotalGrand").innerText = "$"+tG.toFixed(2); 
+            document.getElementById("bookingReportBody").innerHTML = tI>0 ? h : `<tr><td colspan="6" style="text-align:center;">គ្មានទិន្នន័យ!</td></tr>`; 
+        }
+        
         function exportToExcel(tId, fn) { let t = document.getElementById(tId); if(t.rows.length<=1) return; let bl = new Blob([`<html xmlns:x="urn:schemas-microsoft-com:office:excel"><meta charset="UTF-8"><body>${t.outerHTML}</body></html>`], {type:'application/vnd.ms-excel'}); let l = document.createElement("a"); l.href = URL.createObjectURL(bl); l.download = fn+".xls"; document.body.appendChild(l); l.click(); addLog("ទាញយករបាយការណ៍", fn); }
         function printReportPDF(tId, rn) { let t = document.getElementById(tId); if(!t) return; let w = window.open('', '', 'height=700,width=900'); w.document.write(`<html><head><style>body{font-family:'Khmer OS Battambang';} table{width:100%; border-collapse:collapse;} th,td{border:1px solid #000; padding:8px;} th{background:#f4f4f4;} h2{text-align:center;}</style></head><body><h2>${escapeHTML(rn)}</h2>${t.outerHTML}</body></html>`); w.document.close(); setTimeout(()=>w.print(), 500); addLog("Print របាយការណ៍", rn); }
 
