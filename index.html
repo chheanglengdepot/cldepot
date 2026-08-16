@@ -123,6 +123,11 @@
             .sig-line { border-top: 1px solid #000; margin: 0 auto 5px auto; width: 130px; }
             .sig-space { height: 35px; position: relative; }
             .sig-img { max-height: 35px; max-width: 100px; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); }
+
+            /* បំបាត់ស៊ុម Input ពេល Print របាយការណ៍ */
+            .no-print, .btn-add, .btn-edit, .btn-danger, .btn-filter { display: none !important; }
+            input, textarea, select { border: none !important; background: transparent !important; resize: none !important; appearance: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; }
+            input[type="checkbox"] { display: inline-block !important; border: 1px solid #000 !important; }
         }
     </style>
 </head>
@@ -412,7 +417,7 @@
                 <div class="sub-box">
                     <div class="export-btns">
                         <button class="btn-add" onclick="exportToExcel('pendingQuoteReportTable', 'Pending_Deposit_Report')">📥 Export Excel</button>
-                        <button class="btn-filter" onclick="printReportPDF('pendingQuoteReportTable', 'របាយការណ៍ Quotation មិនទាន់កក់ប្រាក់')">🖨️ Print PDF</button>
+                        <button class="btn-filter" onclick="printReportPDF('pendingQuoteReportTable', 'របាយការណ៍ Quotation មិនទាន់កក់ប្រាក់', 'report-tab')">🖨️ Print PDF</button>
                     </div>
                     <div class="form-group">
                         <label>ពីថ្ងៃទី:</label> <input type="date" id="repPendingDateFrom" style="width: 150px;">
@@ -433,7 +438,7 @@
                 <div class="sub-box">
                     <div class="export-btns">
                         <button class="btn-add" onclick="exportToExcel('deliveryReportTable', 'Delivery_Report')">📥 Export Excel</button>
-                        <button class="btn-filter" onclick="printReportPDF('deliveryReportTable', 'របាយការណ៍ដឹកជញ្ជូនទំនិញ')">🖨️ Print PDF</button>
+                        <button class="btn-filter" onclick="printReportPDF('deliveryReportTable', 'របាយការណ៍ដឹកជញ្ជូនទំនិញ', 'report-tab')">🖨️ Print PDF</button>
                     </div>
                     <div class="form-group">
                         <label>ពីថ្ងៃទី:</label> <input type="date" id="repDeliveryDateFrom" style="width: 150px;">
@@ -454,7 +459,7 @@
                 <div class="sub-box">
                     <div class="export-btns">
                         <button class="btn-add" onclick="exportToExcel('bookingReportTable', 'Booking_Report')">📥 Export Excel</button>
-                        <button class="btn-filter" onclick="printReportPDF('bookingReportTable', 'របាយការណ៍ទទួលកក់ និងវិក្កយបត្រ')">🖨️ Print PDF</button>
+                        <button class="btn-filter" onclick="printReportPDF('bookingReportTable', 'របាយការណ៍ទទួលកក់ និងវិក្កយបត្រ', 'report-tab')">🖨️ Print PDF</button>
                     </div>
                     <div class="form-group">
                         <label>ពីថ្ងៃទី:</label> <input type="date" id="repBookingDateFrom" style="width: 150px;">
@@ -481,10 +486,14 @@
             <div id="order-tab" class="tab-content">
                 <h2>📦 តាមដានការបញ្ជាទិញទំនិញពីក្រុមហ៊ុន (Multi-Supplier Order Tracking)</h2>
                 <div class="sub-box">
+                    <div class="export-btns">
+                        <button class="btn-add" onclick="exportToExcel('orderTrackingTable', 'Order_Tracking_Report')">📥 Export Excel</button>
+                        <button class="btn-filter" onclick="printReportPDF('orderTrackingTable', 'តាមដានការបញ្ជាទិញទំនិញពីក្រុមហ៊ុន', 'order-tab')">🖨️ Print PDF</button>
+                    </div>
                     <p style="color:#666; font-size: 14px; margin-top:0;"><i>ផ្ទាំងនេះបង្ហាញតែវិក្កយបត្រណាដែលភ្ញៀវបាន <strong>កក់ប្រាក់រួច និង មិនទាន់ទូទាត់ចប់</strong> ប៉ុណ្ណោះ។</i></p>
                     <div class="form-group"><input type="text" id="searchOrderInput" onkeyup="searchOrders()" placeholder="🔍 ស្វែងរក ឈ្មោះអតិថិជន ឬ លេខវិក្កយបត្រ..." style="flex: 1; border: 2px solid #6f42c1;"></div>
                     <div class="table-responsive">
-                        <table>
+                        <table id="orderTrackingTable">
                             <thead><tr style="background-color: #f8f9fa;"><th style="width:15%;">វិក្កយបត្រ</th><th style="width:20%;">អតិថិជន / ថ្ងៃរៀបការ</th><th style="width:65%;">តាមដានក្រុមហ៊ុនផ្គត់ផ្គង់ (Suppliers)</th></tr></thead>
                             <tbody id="orderTrackingBody"></tbody>
                         </table>
@@ -561,29 +570,31 @@
 
             <!-- ផ្ទាំង Print -->
             <div id="print-tab" class="tab-content">
-                <button class="btn-back btn-filter" onclick="showTab('db-tab')" style="margin-bottom: 20px;">⬅️ ត្រលប់ទៅបញ្ជីវិញ</button>
+                <button class="btn-back btn-filter" onclick="showTab(returnTabAfterPrint)" style="margin-bottom: 20px;">⬅️ ត្រលប់ទៅវិញ</button>
                 <button class="btn-print-action btn-add" onclick="mobilePrint()" style="margin-bottom: 20px; float: right; background-color: #007bff;">🖨️ Print ឥឡូវនេះ (Mobile & Desktop PDF)</button>
                 
                 <div style="padding: 0; clear: both;" id="actualPrintArea">
-                    <div class="header-print">
-                        <div class="logo"><img id="printLogoImg" src="" style="display:none;"></div>
-                        <div class="company-info">
-                            <h1 id="printCompName"></h1><p id="printCompAddress"></p><p id="printCompPhone"></p>
-                            <div class="socials"><span id="p_fb"></span><span id="p_web"></span><span id="p_ig"></span></div>
+                    <div id="invoiceHeaders">
+                        <div class="header-print">
+                            <div class="logo"><img id="printLogoImg" src="" style="display:none;"></div>
+                            <div class="company-info">
+                                <h1 id="printCompName"></h1><p id="printCompAddress"></p><p id="printCompPhone"></p>
+                                <div class="socials"><span id="p_fb"></span><span id="p_web"></span><span id="p_ig"></span></div>
+                            </div>
                         </div>
+                        <div class="inv-title">Wedding Budget Plan and Booking Invoice</div>
+                        <table class="custom-table" style="width: 70%; margin-bottom: 4px;">
+                            <tr><th class="t-center" style="width: 35%; background: #f9f9f9;">លេខវិក្កយបត្រ</th><th class="nowrap" style="background: #f9f9f9; width: 25%;">ថ្ងៃខែចេញតារាង:</th><td id="pr_issueDate" class="nowrap"></td></tr>
+                            <tr><td class="t-center t-bold" id="pr_invNo"></td><th class="nowrap" style="background: #f9f9f9;">ថ្ងៃខែផុតកំណត់:</th><td id="pr_dueDate" class="nowrap"></td></tr>
+                        </table>
+                        <table class="custom-table">
+                            <tr><th colspan="4" class="t-center t-bold" style="background:#f0f0f0;">ព័ត៌មានអតិថិជន:</th></tr>
+                            <tr><th style="width: 20%;">ឈ្មោះអតិថិជន</th><td style="width: 30%; border-bottom: 1px dotted #000;" id="pr_cusName"></td><th style="width: 20%;">ថ្ងៃដឹកជញ្ជូនទី១:</th><td style="width: 30%; border-bottom: 1px dotted #000;" id="pr_delDate1"></td></tr>
+                            <tr><th>ថ្ងៃខែមង្គលការ</th><td style="border-bottom: 1px dotted #000;" id="pr_wedDate"></td><th>ទីកន្លែង:</th><td style="border-bottom: 1px dotted #000;" id="pr_delLoc1"></td></tr>
+                            <tr><th>ទីកន្លែងមង្គលការ</th><td style="border-bottom: 1px dotted #000;" id="pr_wedLoc"></td><th>ថ្ងៃដឹកជញ្ជូនទី២:</th><td style="border-bottom: 1px dotted #000;" id="pr_delDate2"></td></tr>
+                            <tr><th>លេខទំនាក់ទំនង</th><td style="border-bottom: 1px dotted #000;" id="pr_cusPhone"></td><th>ទីកន្លែង:</th><td style="border-bottom: 1px dotted #000;" id="pr_delLoc2"></td></tr>
+                        </table>
                     </div>
-                    <div class="inv-title">Wedding Budget Plan and Booking Invoice</div>
-                    <table class="custom-table" style="width: 70%; margin-bottom: 4px;">
-                        <tr><th class="t-center" style="width: 35%; background: #f9f9f9;">លេខវិក្កយបត្រ</th><th class="nowrap" style="background: #f9f9f9; width: 25%;">ថ្ងៃខែចេញតារាង:</th><td id="pr_issueDate" class="nowrap"></td></tr>
-                        <tr><td class="t-center t-bold" id="pr_invNo"></td><th class="nowrap" style="background: #f9f9f9;">ថ្ងៃខែផុតកំណត់:</th><td id="pr_dueDate" class="nowrap"></td></tr>
-                    </table>
-                    <table class="custom-table">
-                        <tr><th colspan="4" class="t-center t-bold" style="background:#f0f0f0;">ព័ត៌មានអតិថិជន:</th></tr>
-                        <tr><th style="width: 20%;">ឈ្មោះអតិថិជន</th><td style="width: 30%; border-bottom: 1px dotted #000;" id="pr_cusName"></td><th style="width: 20%;">ថ្ងៃដឹកជញ្ជូនទី១:</th><td style="width: 30%; border-bottom: 1px dotted #000;" id="pr_delDate1"></td></tr>
-                        <tr><th>ថ្ងៃខែមង្គលការ</th><td style="border-bottom: 1px dotted #000;" id="pr_wedDate"></td><th>ទីកន្លែង:</th><td style="border-bottom: 1px dotted #000;" id="pr_delLoc1"></td></tr>
-                        <tr><th>ទីកន្លែងមង្គលការ</th><td style="border-bottom: 1px dotted #000;" id="pr_wedLoc"></td><th>ថ្ងៃដឹកជញ្ជូនទី២:</th><td style="border-bottom: 1px dotted #000;" id="pr_delDate2"></td></tr>
-                        <tr><th>លេខទំនាក់ទំនង</th><td style="border-bottom: 1px dotted #000;" id="pr_cusPhone"></td><th>ទីកន្លែង:</th><td style="border-bottom: 1px dotted #000;" id="pr_delLoc2"></td></tr>
-                    </table>
                     <div id="printItemsContainer"></div>
                 </div>
             </div>
@@ -593,13 +604,14 @@
 
     <script>
         let isMobilePrinting = false;
+        let returnTabAfterPrint = 'db-tab'; // អញ្ញាតសម្រាប់កត់ចំណាំថាត្រូវត្រឡប់ទៅផ្ទាំងណាវិញ
 
         $(document).ready(function() {
             $('.select2').select2({ width: '100%' });
             
             window.addEventListener('afterprint', function() {
                 document.title = "Chheangleng Depot System";
-                showTab('db-tab');
+                showTab(returnTabAfterPrint);
                 isMobilePrinting = false;
             });
 
@@ -607,7 +619,7 @@
                 if (isMobilePrinting) {
                     setTimeout(function() {
                         document.title = "Chheangleng Depot System";
-                        showTab('db-tab');
+                        showTab(returnTabAfterPrint);
                         isMobilePrinting = false;
                     }, 500);
                 }
@@ -618,7 +630,7 @@
                 let printEndHandler = function(mql) {
                     if (!mql.matches) {
                         document.title = "Chheangleng Depot System";
-                        showTab('db-tab');
+                        showTab(returnTabAfterPrint);
                         isMobilePrinting = false;
                     }
                 };
@@ -1472,7 +1484,7 @@
                                     <textarea placeholder="វាយបញ្ចូលទីនេះ... លោតចុះបន្ទាត់បាន" onchange="updateSupplier(${i}, ${si}, 'reward', this.value)" style="width:100%; font-size:13px; padding:4px; border:1px solid #ddd; background:white; border-radius:3px; outline:none; resize:vertical; min-height: 40px; font-family:'Khmer OS Battambang';">${escapeHTML(s.reward||'')}</textarea>
                                 </div>
                             </td>
-                            <td style="border:none; border-bottom:1px solid #eee; padding:5px; text-align:center; width:8%; vertical-align:middle;">
+                            <td class="no-print" style="border:none; border-bottom:1px solid #eee; padding:5px; text-align:center; width:8%; vertical-align:middle;">
                                 <button class="btn-danger" style="padding:4px 8px;" onclick="removeSupplier(${i}, ${si})" title="លុបក្រុមហ៊ុននេះ">❌</button>
                             </td>
                         </tr>`).join(''); 
@@ -1483,7 +1495,7 @@
                             <td style="vertical-align: top;"><span style="color:#007bff; font-weight:bold;">${escapeHTML(q.customer)}</span><br><small style="color:#dc3545; font-weight:bold;">ថ្ងៃការ: ${q.wedDate?formatKhmerDate(q.wedDate):'-'}</small></td>
                             <td style="padding: 0;">
                                 <table style="width:100%; border:none; margin:0; background:transparent;"><tbody>${sr}</tbody></table>
-                                <div style="padding: 8px 10px; background: #e9ecef; border-top: 1px solid #ddd;">
+                                <div class="no-print" style="padding: 8px 10px; background: #e9ecef; border-top: 1px solid #ddd;">
                                     <button class="btn-edit" onclick="addSupplier(${i})" style="font-size:13px; background:#28a745; color:white; border:none; padding:6px 12px; border-radius:4px;">➕ បន្ថែមក្រុមហ៊ុនផ្គត់ផ្គង់</button>
                                 </div>
                             </td>
@@ -1517,6 +1529,9 @@
         
         function viewPrint(idx) { 
             let q = quotations[idx]; 
+            returnTabAfterPrint = 'db-tab';
+            document.getElementById("invoiceHeaders").style.display = "block";
+            
             document.getElementById("printCompName").innerText = company.name; document.getElementById("printCompPhone").innerText = company.phone; document.getElementById("printCompAddress").innerText = company.address; document.getElementById("p_fb").innerText = company.fb ? `FB: ${company.fb}` : ''; document.getElementById("p_web").innerText = company.web ? `Web: ${company.web}` : ''; document.getElementById("p_ig").innerText = company.ig ? `IG: ${company.ig}` : ''; let logoImg = document.getElementById("printLogoImg"); if(company.logo) { logoImg.src = company.logo; logoImg.style.display = "inline-block"; } else { logoImg.style.display = "none"; } document.getElementById("pr_invNo").innerText = q.quoteNo; document.getElementById("pr_issueDate").innerText = formatKhmerDate(q.issueDate||q.date); document.getElementById("pr_dueDate").innerText = formatKhmerDate(q.dueDate); document.getElementById("pr_cusName").innerText = q.customer; document.getElementById("pr_cusPhone").innerText = q.phone; document.getElementById("pr_wedDate").innerText = formatKhmerDate(q.wedDate); document.getElementById("pr_wedLoc").innerText = q.wedLoc; document.getElementById("pr_delDate1").innerText = formatKhmerDate(q.delDate1); document.getElementById("pr_delLoc1").innerText = q.delLoc1; document.getElementById("pr_delDate2").innerText = formatKhmerDate(q.delDate2); document.getElementById("pr_delLoc2").innerText = q.delLoc2; 
             
             let mI = q.morningItems||q.items||[], eI = q.eveningItems||[]; 
@@ -1576,11 +1591,43 @@
             document.getElementById('print-tab').classList.add('active'); 
         }
 
+        // អនុញ្ញាតអោយការ Print របាយការណ៍ប្រើប្រាស់ផ្ទាំង Print រួមគ្នា និងអាចត្រឡប់ទៅវិញបាន
+        function printReportPDF(tId, rn, returnTabId) { 
+            let t = document.getElementById(tId); 
+            if(!t) return; 
+            
+            returnTabAfterPrint = returnTabId; // កំណត់ថាត្រូវត្រឡប់ទៅផ្ទាំងណាវិញ
+            document.getElementById("invoiceHeaders").style.display = "none"; // លាក់ក្បាលវិក្កយបត្រចេញ
+            document.getElementById("printItemsContainer").innerHTML = `<h2 style="text-align:center; padding-top: 15px;">${escapeHTML(rn)}</h2>` + t.outerHTML; 
+            
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active')); 
+            document.getElementById('print-tab').classList.add('active'); 
+            
+            document.title = rn; 
+            isMobilePrinting = true;
+            
+            setTimeout(function() {
+                window.print();
+                setTimeout(function() {
+                    if (isMobilePrinting) {
+                        document.title = "Chheangleng Depot System";
+                        showTab(returnTabAfterPrint);
+                        isMobilePrinting = false;
+                    }
+                }, 1500);
+            }, 300);
+            
+            addLog("Print របាយការណ៍", rn); 
+        }
+
         function mobilePrint() {
             let originalTitle = "Chheangleng Depot System";
             let invNo = document.getElementById("pr_invNo").innerText || "Invoice";
             
-            document.title = invNo; 
+            // កំណត់ឈ្មោះ File ទៅតាមប្រភេទការ Print (របាយការណ៍ ឬ វិក្កយបត្រ)
+            let printName = (returnTabAfterPrint === 'report-tab' || returnTabAfterPrint === 'order-tab') ? document.title : invNo;
+            
+            document.title = printName; 
             isMobilePrinting = true;
 
             setTimeout(function() {
@@ -1589,7 +1636,7 @@
                 setTimeout(function() {
                     if (isMobilePrinting) {
                         document.title = originalTitle;
-                        showTab('db-tab');
+                        showTab(returnTabAfterPrint);
                         isMobilePrinting = false;
                     }
                 }, 1500);
@@ -1597,7 +1644,6 @@
         }
 
         function exportToExcel(tId, fn) { let t = document.getElementById(tId); if(t.rows.length<=1) return; let bl = new Blob([`<html xmlns:x="urn:schemas-microsoft-com:office:excel"><meta charset="UTF-8"><body>${t.outerHTML}</body></html>`], {type:'application/vnd.ms-excel'}); let l = document.createElement("a"); l.href = URL.createObjectURL(bl); l.download = fn+".xls"; document.body.appendChild(l); l.click(); addLog("ទាញយករបាយការណ៍", fn); }
-        function printReportPDF(tId, rn) { let t = document.getElementById(tId); if(!t) return; let w = window.open('', '', 'height=700,width=900'); w.document.write(`<html><head><style>body{font-family:'Khmer OS Battambang';} table{width:100%; border-collapse:collapse;} th,td{border:1px solid #000; padding:8px;} th{background:#f4f4f4;} h2{text-align:center;}</style></head><body><h2>${escapeHTML(rn)}</h2>${t.outerHTML}</body></html>`); w.document.close(); setTimeout(()=>w.print(), 500); addLog("Print របាយការណ៍", rn); }
 
         function backupData() {
             let exportItems = {}; items.forEach(i => { let k=i.dbKey; delete i.dbKey; exportItems[k]=i; });
