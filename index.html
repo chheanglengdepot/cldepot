@@ -61,7 +61,13 @@
             .export-btns { float: none; margin-top: 10px; margin-bottom: 15px; display: block; }
         }
 
-        #sync-status { text-align: center; font-size: 14px; padding: 5px; background: #ffc107; color: black; display: none; }
+        /* ------------------ កែសម្រួល UI ផ្ទាំង Loading ថ្មី ------------------ */
+        #sync-status { 
+            position: fixed; top: 15px; right: 15px; z-index: 10000;
+            border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            text-align: center; font-size: 13px; padding: 8px 15px; font-weight: bold;
+            background: #ffc107; color: black; display: none; 
+        }
 
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #e9ecef; display: flex; justify-content: center; align-items: center; z-index: 9999; }
         .login-box { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 90%; max-width: 400px; text-align: center; }
@@ -133,7 +139,6 @@
 </head>
 <body>
 
-    <!-- ផ្ទាំង Login -->
     <div id="login-screen">
         <div class="login-box">
             <h2>ប្រព័ន្ធគ្រប់គ្រងវិក្កយបត្រ</h2>
@@ -146,7 +151,7 @@
     </div>
 
     <div id="app-content">
-        <div id="sync-status">🔄 កំពុងទាញទិន្នន័យពី Cloud...</div>
+        <div id="sync-status">🔄 កំពុងធ្វើបច្ចុប្បន្នភាព...</div>
 
         <div class="nav">
             <button id="nav-settings" class="active" onclick="showTab('settings-tab')" style="background: #17a2b8;">⚙️ 1. ហាង</button>
@@ -604,7 +609,7 @@
 
     <script>
         let isMobilePrinting = false;
-        let returnTabAfterPrint = 'db-tab'; // អញ្ញាតសម្រាប់កត់ចំណាំថាត្រូវត្រឡប់ទៅផ្ទាំងណាវិញ
+        let returnTabAfterPrint = 'db-tab'; 
 
         $(document).ready(function() {
             $('.select2').select2({ width: '100%' });
@@ -734,15 +739,21 @@
 
         let isFirstLoad = true;
         let loadedCount = 0;
+        let syncTimeout;
 
         function checkInitialLoad() {
             loadedCount++;
-            if(loadedCount === 7) { 
-                document.getElementById('sync-status').style.display = 'none';
-                applyPermissions();
-                refreshAllUI();
-                isFirstLoad = false;
+            if(loadedCount === 7 && isFirstLoad) { 
+                completeInitialLoad();
             }
+        }
+
+        function completeInitialLoad() {
+            clearTimeout(syncTimeout);
+            document.getElementById('sync-status').style.display = 'none';
+            applyPermissions();
+            refreshAllUI();
+            isFirstLoad = false;
         }
 
         function triggerRefresh() {
@@ -757,23 +768,56 @@
             console.error("Database Error: ", error);
         }
 
+        function loadFromLocalCache() {
+            try {
+                let cachedItems = localStorage.getItem('chheangleng_items');
+                if(cachedItems) items = JSON.parse(cachedItems);
+                
+                let cachedQuotes = localStorage.getItem('chheangleng_quotes');
+                if(cachedQuotes) quotations = JSON.parse(cachedQuotes);
+                
+                let cachedCus = localStorage.getItem('chheangleng_customers');
+                if(cachedCus) customers = JSON.parse(cachedCus);
+
+                if(items.length > 0 || quotations.length > 0 || customers.length > 0) {
+                    applyPermissions();
+                    refreshAllUI();
+                }
+            } catch(e) { console.log("Cache error", e); }
+        }
+
         function startDatabaseListener() {
+            document.getElementById('sync-status').innerText = "🔄 កំពុងធ្វើបច្ចុប្បន្នភាព...";
             document.getElementById('sync-status').style.display = 'block';
+            
             loadedCount = 0;
             isFirstLoad = true;
 
+            loadFromLocalCache();
+
+            syncTimeout = setTimeout(() => {
+                if (isFirstLoad) {
+                    document.getElementById('sync-status').innerText = "⚠️ អ៊ីនធឺណិតរាងយឺត កំពុងទាញពីក្រោយ...";
+                    setTimeout(() => { document.getElementById('sync-status').style.display = 'none'; }, 3000);
+                    completeInitialLoad(); 
+                }
+            }, 4000);
+
             db.ref('chheangleng_db/items').on('value', snap => {
                 let d = snap.val() || {}; items = Object.keys(d).map(k => ({...d[k], dbKey: k}));
+                localStorage.setItem('chheangleng_items', JSON.stringify(items));
                 loadedCount < 7 ? checkInitialLoad() : triggerRefresh();
             }, errorCallback);
 
             db.ref('chheangleng_db/quotations').on('value', snap => {
                 let d = snap.val() || {}; quotations = Object.keys(d).map(k => ({...d[k], dbKey: k}));
+                localStorage.setItem('chheangleng_quotes', JSON.stringify(quotations));
                 loadedCount < 7 ? checkInitialLoad() : triggerRefresh();
             }, errorCallback);
 
             db.ref('chheangleng_db/customers').on('value', snap => {
                 let d = snap.val() || {}; customers = Object.keys(d).map(k => ({...d[k], dbKey: k}));
+                localStorage.setItem('chheangleng_customers', JSON.stringify(customers));
                 loadedCount < 7 ? checkInitialLoad() : triggerRefresh();
             }, errorCallback);
 
