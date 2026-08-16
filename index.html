@@ -225,7 +225,7 @@
                 </div>
             </div>
 
-            <!-- ផ្ទាំងទី២: Item List -->
+            <!-- ផ្ទាំងទី២: Item List (បានកែប្រែប្រអប់លេខកូដ Auto) -->
             <div id="item-tab" class="tab-content">
                 <h2 id="itemTitle">បញ្ជីផលិតផល (Item List)</h2>
                 <div class="form-group" style="background: #e1f5fe; padding: 15px; border-radius: 4px; justify-content: space-between; border: 1px solid #03a9f4;">
@@ -238,8 +238,8 @@
                     <div><button class="btn-filter" style="background: #00796b;" onclick="exportItemsTemplate()">📤 ទាញគំរូ Excel</button></div>
                 </div>
                 <div class="form-group" style="align-items: flex-end;">
-                    <div style="width: 120px;"><label>លេខកូដ</label><input type="text" id="itemCode" placeholder="ឧ. P001"></div>
-                    <div style="flex: 1; min-width: 150px;"><label>ប្រភេទ</label><input type="text" id="itemCat" list="catList" oninput="generateAutoCode()" placeholder="ឧ. ស្រាបៀរ"><datalist id="catList"></datalist></div>
+                    <div style="width: 130px;"><label>លេខកូដ (Auto)</label><input type="text" id="itemCode" placeholder="Auto (ស្វ័យប្រវត្តិ)" readonly style="background:#e9ecef;"></div>
+                    <div style="flex: 1; min-width: 150px;"><label>ប្រភេទ</label><input type="text" id="itemCat" list="catList" placeholder="ឧ. ស្រាបៀរ"><datalist id="catList"></datalist></div>
                     <div style="flex: 2; min-width: 200px;"><label>ឈ្មោះផលិតផល</label><input type="text" id="itemName"></div>
                     <div style="width: 120px;"><label>តម្លៃដើម</label><input type="number" id="itemCost"></div>
                     <div style="width: 120px;"><label>តម្លៃលក់</label><input type="number" id="itemPrice"></div>
@@ -478,7 +478,7 @@
                 </div>
             </div>
 
-            <!-- ផ្ទាំងទី៧: តាមដានការបញ្ជាទិញ -->
+            <!-- ផ្ទាំងទី៧: តាមដានការបញ្ជាទិញ (UI ត្រូវបានរៀបចំស្អាត និងកែអក្ខរាវិរុទ្ធ) -->
             <div id="order-tab" class="tab-content">
                 <h2>📦 តាមដានការបញ្ជាទិញទំនិញពីក្រុមហ៊ុន (Multi-Supplier Order Tracking)</h2>
                 <div class="sub-box">
@@ -593,19 +593,17 @@
     </div>
 
     <script>
-        let isMobilePrinting = false; // បន្ថែមអញ្ញាតនេះសម្រាប់តាមដានស្ថានភាព Print
+        let isMobilePrinting = false;
 
         $(document).ready(function() {
             $('.select2').select2({ width: '100%' });
             
-            // វិធីទី១៖ ប្រើប្រាស់ Event ធម្មតា (សម្រាប់កុំព្យូទ័រ)
             window.addEventListener('afterprint', function() {
                 document.title = "Chheangleng Depot System";
                 showTab('db-tab');
                 isMobilePrinting = false;
             });
 
-            // វិធីទី២៖ សម្រាប់ទូរស័ព្ទ (iOS/Safari) ពេលបិទផ្ទាំង Share ហើយត្រឡប់មក Browser វិញ
             window.addEventListener('focus', function() {
                 if (isMobilePrinting) {
                     setTimeout(function() {
@@ -616,7 +614,6 @@
                 }
             });
 
-            // វិធីទី៣៖ ប្រើប្រាស់ Media Query (សុវត្ថិភាពបន្ថែម)
             if (window.matchMedia) {
                 let mediaQueryList = window.matchMedia('print');
                 let printEndHandler = function(mql) {
@@ -629,7 +626,7 @@
                 if (mediaQueryList.addEventListener) {
                     mediaQueryList.addEventListener('change', printEndHandler);
                 } else {
-                    mediaQueryList.addListener(printEndHandler); // Fallback
+                    mediaQueryList.addListener(printEndHandler);
                 }
             }
         });
@@ -920,19 +917,15 @@
             
             if(!email || !pass || pass.length < 6) return alert("សូមបញ្ចូល Email និងលេខសម្ងាត់ឲ្យបានត្រឹមត្រូវ (យ៉ាងតិច ៦ខ្ទង់)!");
 
-            // ប្រើ SecondaryApp ដោយសុវត្ថិភាព ជៀសវាង Error "App already exists"
             let secondaryApp = firebase.apps.find(app => app.name === "SecondaryApp");
             if (!secondaryApp) {
                 secondaryApp = firebase.initializeApp(firebaseConfig, "SecondaryApp");
             }
 
-            // បង្កើត User ទៅកាន់ Firebase Auth
             secondaryApp.auth().createUserWithEmailAndPassword(email, pass)
                 .then((userCredential) => {
-                    // Sign Out ភ្លាមៗ ដើម្បីកុំអោយវា Log in ជាន់ Admin
                     secondaryApp.auth().signOut();
 
-                    // បញ្ចូលទិន្នន័យសិទ្ធិទៅ Database
                     let key = email.replace(/\./g, ',');
                     db.ref(`chheangleng_db/userRoles/${key}`).set(role);
                     
@@ -942,7 +935,6 @@
 
                     addLog("ផ្តល់សិទ្ធិគណនី", `Email: ${email}, ឈ្មោះ: ${userName||'-'}, សិទ្ធិ: ${role}`);
                     
-                    // សម្អាតប្រអប់បំពេញ
                     document.getElementById('newRoleName').value = '';
                     document.getElementById('newRoleEmail').value = '';
                     document.getElementById('newRolePass').value = '';
@@ -996,28 +988,43 @@
 
         function showTab(tabId) { document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active')); document.querySelectorAll('.nav button').forEach(btn => btn.classList.remove('active')); document.getElementById(tabId).classList.add('active'); document.querySelectorAll('.nav button').forEach(btn => { if(btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabId)) { btn.classList.add('active'); } }); }
 
-        function generateAutoCode() { let codeInput = document.getElementById("itemCode"); let catInput = document.getElementById("itemCat").value.trim(); if (catInput !== "" && codeInput.value === "") { let max = 0; items.forEach(item => { if(item.code) { let num = parseInt(item.code.replace(/\D/g, '')); if(!isNaN(num) && num > max) max = num; } }); codeInput.value = "P" + String(max + 1).padStart(3, '0'); } }
+        // បង្កើតលេខកូដទំនិញថ្មីដោយស្វ័យប្រវត្តិ
+        function generateAutoItemCode() { 
+            let max = 0; 
+            items.forEach(item => { 
+                if(item.code && item.code.startsWith("P")) { 
+                    let num = parseInt(item.code.replace("P", '')); 
+                    if(!isNaN(num) && num > max) max = num; 
+                } 
+            }); 
+            return "P" + String(max + 1).padStart(3, '0'); 
+        }
         
         function saveNewItem() { 
-            let code = document.getElementById("itemCode").value.trim(); 
             let cat = document.getElementById("itemCat").value.trim(); 
             let name = document.getElementById("itemName").value.trim(); 
             let cost = document.getElementById("itemCost").value; 
             let price = document.getElementById("itemPrice").value; 
-            if(name && price && code) { 
-                let dup = items.findIndex(i => i.code.toLowerCase() === code.toLowerCase()); 
-                if (dup > -1 && dup !== currentEditItemIndex) { alert("⚠️ លេខកូដមានរួចហើយ!"); return; } 
-                let itemData = { code: code, cat: cat, name: name, cost: cost || 0, price: price, lastUpdated: new Date().toISOString() }; 
+            
+            if(name && price) { 
+                let code = document.getElementById("itemCode").value.trim();
+                let itemData = { cat: cat, name: name, cost: cost || 0, price: price, lastUpdated: new Date().toISOString() }; 
+                
                 if (currentEditItemIndex > -1) { 
+                    itemData.code = code;
                     let key = items[currentEditItemIndex].dbKey;
                     db.ref(`chheangleng_db/items/${key}`).update(itemData);
                     addLog("កែប្រែទំនិញ", `កូដ: ${code}, ឈ្មោះ: ${name}`); 
                 } else { 
+                    code = generateAutoItemCode(); 
+                    itemData.code = code;
                     db.ref('chheangleng_db/items').push(itemData);
                     addLog("បង្កើតទំនិញថ្មី", `កូដ: ${code}, ឈ្មោះ: ${name}`); 
                 } 
                 resetItemForm(); 
-            } else { alert("បញ្ចូល លេខកូដ, ឈ្មោះ និងតម្លៃ!"); } 
+            } else { 
+                alert("សូមបញ្ចូល ឈ្មោះ និងតម្លៃលក់!"); 
+            } 
         }
         
         function editItem(index) { 
@@ -1029,7 +1036,6 @@
             document.getElementById("itemPrice").value = item.price; 
             document.getElementById("btnSaveItem").innerText = "Update"; 
             
-            // បន្ថែមកូដ Scroll ទៅលើ
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
@@ -1041,7 +1047,12 @@
             } 
         }
         
-        function resetItemForm() { currentEditItemIndex = -1; ["itemCode","itemCat","itemName","itemCost","itemPrice"].forEach(id=>document.getElementById(id).value=''); document.getElementById("btnSaveItem").innerText = "រក្សាទុក"; }
+        function resetItemForm() { 
+            currentEditItemIndex = -1; 
+            ["itemCat","itemName","itemCost","itemPrice"].forEach(id=>document.getElementById(id).value=''); 
+            document.getElementById("itemCode").value = generateAutoItemCode();
+            document.getElementById("btnSaveItem").innerText = "រក្សាទុក"; 
+        }
         
         function renderItemsTable() { 
             let body = document.getElementById("itemListBody"); 
@@ -1053,6 +1064,10 @@
             let cats = [...new Set(items.map(i => i.cat).filter(c => c))]; 
             document.getElementById("catList").innerHTML = cats.map(c => `<option value="${escapeHTML(c)}">`).join(''); 
             document.getElementById("filterCategory").innerHTML = `<option value="">-- ទាំងអស់ --</option>` + cats.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join(''); 
+            
+            if (currentEditItemIndex === -1) {
+                document.getElementById("itemCode").value = generateAutoItemCode();
+            }
         }
         
         function searchItems() { let keyword = document.getElementById("searchItemInput").value.toLowerCase(); let catFilter = document.getElementById("filterCategory").value.toLowerCase(); let rows = document.getElementById("itemListBody").getElementsByTagName("tr"); for (let i = 0; i < rows.length; i++) { let rowText = rows[i].innerText.toLowerCase(); let rowCat = rows[i].getElementsByTagName("td")[2].innerText.toLowerCase(); let matchS = rowText.includes(keyword); let matchC = catFilter === "" || rowCat === catFilter; rows[i].style.display = (matchS && matchC) ? "" : "none"; } }
@@ -1079,7 +1094,7 @@
                         let idx = items.findIndex(i => i.code.toLowerCase() === code.toString().toLowerCase()); 
                         let nowIso = new Date().toISOString();
                         if (idx > -1) { 
-                            let key = items[idx].dbKey;
+                            let key = items[idx].dbKey; 
                             updates[`chheangleng_db/items/${key}`] = { code: code.toString(), cat: cat.toString(), name: name.toString(), cost, price, lastUpdated: nowIso };
                             c2++; 
                         } else { 
@@ -1159,7 +1174,7 @@
                 } else { statusBadge = `<span style="color:gray; font-size:12px;">គ្មាន Quote</span>`; } 
                 
                 let delBtn = currentRole === 'admin' ? `<button class="btn-danger" onclick="deleteCustomer(${index})">❌</button>` : '';
-                body.innerHTML += `<tr data-deposit="${hasDeposit}"><td>${rowNum++}</td><td>${escapeHTML(c.code)}</td><td style="font-weight:bold; color:#007bff; min-width: 150px;">${escapeHTML(c.name)}</td><td>${escapeHTML(phones)}</td><td>${invoiceBadge}</td><td>${wedDate}</td><td>${escapeHTML(docInfo)}</td><td>${depositDate}</td><td>${statusBadge}</td><td style="text-align:center;"><input type="checkbox" onchange="toggleFreeItem(${index})" ${c.receivedFreeItem?'checked':''}></td><td class="nowrap"><button class="btn-edit" onclick="editCustomer(${index})">កែ</button> ${delBtn}</td></tr>`; 
+                body.innerHTML += `<tr data-deposit="${hasDeposit}"><td>${rowNum++}</td><td><a href="javascript:void(0)" onclick="editCustomer(${index})" style="color: #007bff; font-weight: bold;">${escapeHTML(c.code||'-')}</a></td><td style="font-weight:bold; color:#007bff; min-width: 150px;">${escapeHTML(c.name)}</td><td>${escapeHTML(phones)}</td><td>${invoiceBadge}</td><td>${wedDate}</td><td>${escapeHTML(docInfo)}</td><td>${depositDate}</td><td>${statusBadge}</td><td style="text-align:center;"><input type="checkbox" onchange="toggleFreeItem(${index})" ${c.receivedFreeItem?'checked':''}></td><td class="nowrap"><button class="btn-edit" onclick="editCustomer(${index})">កែ</button> ${delBtn}</td></tr>`; 
             } 
         }
         
@@ -1174,7 +1189,6 @@
             document.getElementById("cusList_Note").value = c.note||''; 
             document.getElementById("btnSaveCustomer").innerText = "Update"; 
             
-            // បន្ថែមកូដ Scroll ទៅលើ
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
@@ -1186,7 +1200,7 @@
             } 
         }
         
-        function searchCustomers() { let keyword = document.getElementById("searchCustomerInput").value.toLowerCase(); let status = document.getElementById("filterCustomerStatus").value; let rows = document.getElementById("customerListBody").getElementsByTagName("tr"); for (let i = 0; i < rows.length; i++) { let txt = rows[i].innerText.toLowerCase(); let dep = rows[i].getAttribute("data-deposit"); let mS = txt.includes(keyword); let mF = true; if (status === "no_deposit" && dep === "yes") mF = false; else if (status === "deposited" && dep === "no") mF = false; rows[i].style.display = (mS && mF) ? "" : "none"; } }
+        function searchCustomers() { let keyword = document.getElementById("searchCustomerInput").value.toLowerCase(); let status = document.getElementById("filterCustomerStatus").value; let rows = document.getElementById("customerListBody").getElementsByTagName("tr"); for (let i = 0; i < rows.length; i++) { let txt = rows[i].innerText.toLowerCase(); let dep = rows[i].getAttribute("data-deposit"); let mS = txt.includes(keyword); let mF = true; if (status === "no_deposit" && dep === "yes") mF = false; else if (status === "deposited" && dep === "no") mF = false; rows[i].style.display = (matchS = mS && mF) ? "" : "none"; } }
 
         function loadCustomerDropdown() { 
             let options = '<option value="">🔍 ជ្រើសរើសអតិថិជន...</option>' + customers.map(c => `<option value="${escapeHTML(c.name)}">[${escapeHTML(c.code)}] ${escapeHTML(c.name)}</option>`).join('');
@@ -1294,7 +1308,7 @@
                 isInactive: old.isInactive||false, 
                 suppliers: old.suppliers||[],
                 savedBy: currentKey 
-            };
+            }; 
             
             if(currentEditQuoteIndex > -1) { 
                 let key = quotations[currentEditQuoteIndex].dbKey;
@@ -1303,7 +1317,7 @@
             } else { 
                 db.ref('chheangleng_db/quotations').push(qData);
                 addLog("បង្កើតវិក្កយបត្រថ្មី", `លេខ: ${qData.quoteNo}, អតិថិជន: ${cus}, សរុប: $${qData.grandTotal}`);
-            }
+            } 
             
             alert("Save ជោគជ័យ!"); resetQuoteForm(); showTab('db-tab');
         }
@@ -1359,7 +1373,55 @@
         }
         function searchQuotation() { let k = document.getElementById("searchQuote").value.toLowerCase(); let r = document.getElementById("dbListBody").getElementsByTagName("tr"); for(let i=0; i<r.length; i++) r[i].style.display = r[i].innerText.toLowerCase().includes(k) ? "" : "none"; }
 
-        function renderOrderTrackingTable() { let b = document.getElementById("orderTrackingBody"); b.innerHTML = ""; let c = 0; quotations.forEach((q, i) => { if (parseFloat(q.deposit)>0 && !q.isPaid) { c++; let sr = (q.suppliers||[]).map((s, si) => `<tr><td style="border:none; border-bottom:1px solid #eee;"><input type="text" placeholder="ក្រុមហ៊ុន..." value="${escapeHTML(s.name||'')}" onchange="updateSupplier(${i}, ${si}, 'name', this.value)" style="width:100%; font-size:12px;"></td><td style="border:none; border-bottom:1px solid #eee; white-space:nowrap;"><input type="checkbox" onchange="updateSupplier(${i}, ${si}, 'doc', this.checked)" ${s.doc?'checked':''}> ឯកស</td><td style="border:none; border-bottom:1px solid #eee; white-space:nowrap;"><input type="checkbox" onchange="updateSupplier(${i}, ${si}, 'goods', this.checked)" ${s.goods?'checked':''}> ទំនិញ</td><td style="border:none; border-bottom:1px solid #eee;"><input type="text" placeholder="ថែម..." value="${escapeHTML(s.reward||'')}" onchange="updateSupplier(${i}, ${si}, 'reward', this.value)" style="width:100%; font-size:12px;"></td><td style="border:none; border-bottom:1px solid #eee;"><button class="btn-danger" style="padding:2px 5px;" onclick="removeSupplier(${i}, ${si})">❌</button></td></tr>`).join(''); b.innerHTML += `<tr><td style="font-weight:bold; vertical-align: top;"><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color: #007bff;">${escapeHTML(q.quoteNo)}</a></td><td style="vertical-align: top;"><span style="color:#007bff; font-weight:bold;">${escapeHTML(q.customer)}</span><br><small style="color:#6f42c1;">ការ: ${q.wedDate?formatKhmerDate(q.wedDate):'-'}</small></td><td style="padding: 0;"><table style="width:100%; border:none; margin:0; background:transparent;"><tbody>${sr}</tbody></table><div style="padding: 5px 10px; background: #f8f9fa; border-top: 1px dashed #ccc;"><button class="btn-edit" onclick="addSupplier(${i})" style="font-size:12px;">➕ បន្ថែមក្រុមហ៊ុន</button></div></td></tr>`; } }); if(c===0) b.innerHTML = `<tr><td colspan="3" style="text-align:center; color:gray;">គ្មានវិក្កយបត្រកំពុងរង់ចាំតាមដានទេ</td></tr>`; }
+        function renderOrderTrackingTable() { 
+            let b = document.getElementById("orderTrackingBody"); 
+            b.innerHTML = ""; 
+            let c = 0; 
+            quotations.forEach((q, i) => { 
+                if (parseFloat(q.deposit)>0 && !q.isPaid) { 
+                    c++; 
+                    let sr = (q.suppliers||[]).map((s, si) => `
+                        <tr>
+                            <td style="border:none; border-bottom:1px solid #eee; padding:5px; width:28%;">
+                                <input type="text" placeholder="ឈ្មោះក្រុមហ៊ុន..." value="${escapeHTML(s.name||'')}" onchange="updateSupplier(${i}, ${si}, 'name', this.value)" style="width:100%; font-size:13px; padding:6px; border:1px solid #ccc; border-radius:4px;">
+                            </td>
+                            <td style="border:none; border-bottom:1px solid #eee; padding:5px; white-space:nowrap; width:12%;">
+                                <label style="cursor:pointer; display:flex; align-items:center; gap:5px; font-size:13px;">
+                                    <input type="checkbox" onchange="updateSupplier(${i}, ${si}, 'doc', this.checked)" ${s.doc?'checked':''} style="width:16px; height:16px; margin:0;"> ឯកសារ
+                                </label>
+                            </td>
+                            <td style="border:none; border-bottom:1px solid #eee; padding:5px; white-space:nowrap; width:12%;">
+                                <label style="cursor:pointer; display:flex; align-items:center; gap:5px; font-size:13px;">
+                                    <input type="checkbox" onchange="updateSupplier(${i}, ${si}, 'goods', this.checked)" ${s.goods?'checked':''} style="width:16px; height:16px; margin:0;"> ទំនិញ
+                                </label>
+                            </td>
+                            <td style="border:none; border-bottom:1px solid #eee; padding:5px; width:40%;">
+                                <div style="display:flex; align-items:center; gap:5px; background: #f8f9fa; padding:2px 5px; border-radius:4px; border:1px dashed #ccc;">
+                                    <span style="font-size:13px; font-weight:bold; color:#0056b3; white-space:nowrap;">ទំនិញថែម:</span>
+                                    <input type="text" placeholder="វាយបញ្ចូលទីនេះ..." value="${escapeHTML(s.reward||'')}" onchange="updateSupplier(${i}, ${si}, 'reward', this.value)" style="width:100%; font-size:13px; padding:4px; border:none; background:transparent; outline:none;">
+                                </div>
+                            </td>
+                            <td style="border:none; border-bottom:1px solid #eee; padding:5px; text-align:center; width:8%;">
+                                <button class="btn-danger" style="padding:4px 8px;" onclick="removeSupplier(${i}, ${si})" title="លុបក្រុមហ៊ុននេះ">❌</button>
+                            </td>
+                        </tr>`).join(''); 
+                        
+                    b.innerHTML += `
+                        <tr>
+                            <td style="font-weight:bold; vertical-align: top;"><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color: #007bff;">${escapeHTML(q.quoteNo)}</a></td>
+                            <td style="vertical-align: top;"><span style="color:#007bff; font-weight:bold;">${escapeHTML(q.customer)}</span><br><small style="color:#dc3545; font-weight:bold;">ថ្ងៃការ: ${q.wedDate?formatKhmerDate(q.wedDate):'-'}</small></td>
+                            <td style="padding: 0;">
+                                <table style="width:100%; border:none; margin:0; background:transparent;"><tbody>${sr}</tbody></table>
+                                <div style="padding: 8px 10px; background: #e9ecef; border-top: 1px solid #ddd;">
+                                    <button class="btn-edit" onclick="addSupplier(${i})" style="font-size:13px; background:#28a745; color:white; border:none; padding:6px 12px; border-radius:4px;">➕ បន្ថែមក្រុមហ៊ុនផ្គត់ផ្គង់</button>
+                                </div>
+                            </td>
+                        </tr>`; 
+                } 
+            }); 
+            if(c===0) b.innerHTML = `<tr><td colspan="3" style="text-align:center; color:gray; padding: 20px;">មិនមានវិក្កយបត្រកំពុងរង់ចាំតាមដានទេ (បង្ហាញតែវិក្កយបត្រដែលបានកក់ប្រាក់ និងមិនទាន់ទូទាត់)</td></tr>`; 
+        }
+
         function addSupplier(i) { 
             let key = quotations[i].dbKey;
             let currentSuppliers = quotations[i].suppliers||[]; 
@@ -1368,13 +1430,13 @@
         }
         function removeSupplier(i, si) { 
             let key = quotations[i].dbKey;
-            let currentSuppliers = quotations[i].suppliers||[];
+            let currentSuppliers = quotations[i].suppliers||[]; 
             currentSuppliers.splice(si, 1); 
             db.ref(`chheangleng_db/quotations/${key}`).update({suppliers: currentSuppliers});
         }
         function updateSupplier(i, si, f, v) { 
             let key = quotations[i].dbKey;
-            let currentSuppliers = quotations[i].suppliers||[];
+            let currentSuppliers = quotations[i].suppliers||[]; 
             currentSuppliers[si][f] = v; 
             db.ref(`chheangleng_db/quotations/${key}`).update({suppliers: currentSuppliers});
         }
@@ -1409,7 +1471,7 @@
             let savedByKey = q.savedBy || loggedInEmail.replace(/\./g, ',');
             let printProf = userProfiles[savedByKey] || {};
             let printSig = printProf.signature || company.signature || '';
-            let printName = printProf.name || company.sellerName || 'នី និមល';
+            let printName = printProf.name || company.sellerName || 'នី និមល'; 
             
             h += `<div class="keep-together">
                     <table class="quote-print-table" style="margin-top:0;">
@@ -1443,20 +1505,16 @@
             document.getElementById('print-tab').classList.add('active'); 
         }
 
-        // ការងារ Print នៅលើទូរស័ព្ទត្រូវបានកែសម្រួលដើម្បីចាប់យកពេលដែល Share រួច
         function mobilePrint() {
             let originalTitle = "Chheangleng Depot System";
             let invNo = document.getElementById("pr_invNo").innerText || "Invoice";
             
-            // ប្តូរឈ្មោះជាលេខវិក្កយបត្រ ដើម្បីពេល Share ចូល Telegram ឬកម្មវិធីផ្សេងៗ វាលោតឈ្មោះស្អាត
             document.title = invNo; 
             isMobilePrinting = true;
 
-            // ពន្យារពេលបន្តិច ដើម្បីឲ្យ Browser ផ្លាស់ប្តូរឈ្មោះរួចរាល់ទើបហៅផ្ទាំង Print/Share មក
             setTimeout(function() {
                 window.print();
                 
-                // វិធីទី៤៖ សម្រាប់ Android ឬ កុំព្យូទ័រ ដែលមិនមានការ Pause កូដពេលចេញផ្ទាំង Print
                 setTimeout(function() {
                     if (isMobilePrinting) {
                         document.title = originalTitle;
