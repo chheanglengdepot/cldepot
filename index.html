@@ -155,7 +155,6 @@
             <button id="nav-logs" onclick="showTab('log-tab')" style="background: #ffc107; color: black;">📝 9. កំណត់ត្រាសកម្មភាព</button>
             <button id="nav-profile" onclick="showTab('profile-tab')" style="background: #17a2b8;">👤 គណនីខ្ញុំ</button>
             
-            <!-- បង្ហាញឈ្មោះ User ដែលកំពុង Login គ្រប់ផ្ទាំង -->
             <div style="margin-left:auto; display:flex; align-items:center; gap:10px;">
                 <span style="color:#ffc107; font-size:15px; font-weight:bold;">👤 User: <span id="currentUserName" style="color:white;">...</span></span>
                 <button class="btn-logout" onclick="logoutUser()">🔒 ចាកចេញ</button>
@@ -225,7 +224,7 @@
                 </div>
             </div>
 
-            <!-- ផ្ទាំងទី២: Item List (បានកែប្រែប្រអប់លេខកូដ Auto) -->
+            <!-- ផ្ទាំងទី២: Item List -->
             <div id="item-tab" class="tab-content">
                 <h2 id="itemTitle">បញ្ជីផលិតផល (Item List)</h2>
                 <div class="form-group" style="background: #e1f5fe; padding: 15px; border-radius: 4px; justify-content: space-between; border: 1px solid #03a9f4;">
@@ -422,9 +421,9 @@
                     </div>
                     <div class="table-responsive">
                         <table id="pendingQuoteReportTable">
-                            <thead><tr><th>លេខវិក្កយបត្រ</th><th>ថ្ងៃចេញតារាង</th><th>អតិថិជន</th><th>លេខទូរស័ព្ទ</th><th>សរុប (Grand Total)</th></tr></thead>
+                            <thead><tr><th>លេខវិក្កយបត្រ</th><th>ថ្ងៃចេញតារាង</th><th>អតិថិជន</th><th>លេខទូរស័ព្ទ</th><th>ថ្ងៃការ</th><th>សរុប (Grand Total)</th></tr></thead>
                             <tbody id="pendingQuoteReportBody">
-                                <tr><td colspan="5" style="text-align:center; color:#666;">សូមជ្រើសរើសចន្លោះកាលបរិច្ឆេទ។</td></tr>
+                                <tr><td colspan="6" style="text-align:center; color:#666;">សូមជ្រើសរើសចន្លោះកាលបរិច្ឆេទ។</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1166,14 +1165,14 @@
                 
                 if (relatedQuotes.length > 0) { 
                     let q = relatedQuotes[relatedQuotes.length - 1]; wedDate = q.wedDate ? formatKhmerDate(q.wedDate) : "-"; 
-                    invoiceBadge = `<a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color: #007bff; font-weight: bold;">${escapeHTML(q.quoteNo)}</a>`; 
+                    invoiceBadge = `<span style="color:#007bff; font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')">${escapeHTML(q.quoteNo)}</span>`; 
                     if (q.docReceived) docInfo = q.docNote || "បានទទួល"; 
                     let dep = parseFloat(q.deposit) || 0; 
                     if (dep > 0) { hasDeposit = "yes"; statusBadge = `<span style="background:#28a745; color:white; padding:4px; font-size:12px; display:inline-block;">បានកក់: $${dep.toFixed(2)}</span>`; depositDate = formatKhmerDate(q.issueDate || q.date); } else { statusBadge = `<span style="background:#ffc107; padding:4px; font-size:12px; display:inline-block;">មិនទាន់កក់</span>`; } 
                 } else { statusBadge = `<span style="color:gray; font-size:12px;">គ្មាន Quote</span>`; } 
                 
                 let delBtn = currentRole === 'admin' ? `<button class="btn-danger" onclick="deleteCustomer(${index})">❌</button>` : '';
-                body.innerHTML += `<tr data-deposit="${hasDeposit}"><td>${rowNum++}</td><td><a href="javascript:void(0)" onclick="editCustomer(${index})" style="color: #007bff; font-weight: bold;">${escapeHTML(c.code||'-')}</a></td><td style="font-weight:bold; color:#007bff; min-width: 150px;">${escapeHTML(c.name)}</td><td>${escapeHTML(phones)}</td><td>${invoiceBadge}</td><td>${wedDate}</td><td>${escapeHTML(docInfo)}</td><td>${depositDate}</td><td>${statusBadge}</td><td style="text-align:center;"><input type="checkbox" onchange="toggleFreeItem(${index})" ${c.receivedFreeItem?'checked':''}></td><td class="nowrap"><button class="btn-edit" onclick="editCustomer(${index})">កែ</button> ${delBtn}</td></tr>`; 
+                body.innerHTML += `<tr data-deposit="${hasDeposit}"><td>${rowNum++}</td><td><span style="color:#007bff; font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="editCustomer(${index})">${escapeHTML(c.code||'-')}</span></td><td style="font-weight:bold; color:#007bff; min-width: 150px;">${escapeHTML(c.name)}</td><td>${escapeHTML(phones)}</td><td>${invoiceBadge}</td><td>${wedDate}</td><td>${escapeHTML(docInfo)}</td><td>${depositDate}</td><td>${statusBadge}</td><td style="text-align:center;"><input type="checkbox" onchange="toggleFreeItem(${index})" ${c.receivedFreeItem?'checked':''}></td><td class="nowrap"><button class="btn-edit" onclick="editCustomer(${index})">កែ</button> ${delBtn}</td></tr>`; 
             } 
         }
         
@@ -1367,10 +1366,83 @@
                 let doc = q.docReceived ? (q.docNote||"បានទទួល") : "-"; 
                 let delBtn = currentRole === 'admin' ? `<button class="btn-danger" onclick="deleteQuotation(${i})" style="margin-left: 5px; padding: 6px 5px;">❌</button>` : '';
 
-                b.innerHTML += `<tr style="${rs}"><td><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color:#007bff; font-weight:bold;">${escapeHTML(q.quoteNo)}</a> ${ib}</td><td>${q.issueDate||q.date||''}</td><td>${escapeHTML(q.customer)}</td><td style="${dc}">${q.wedDate?formatKhmerDate(q.wedDate):'-'}</td><td style="color:#0056b3;">${escapeHTML(doc)}</td><td>$${(q.grandTotal||0).toFixed(2)}</td><td style="color:green;">$${(q.deposit||0).toFixed(2)}</td><td style="text-align:center;"><input type="checkbox" onchange="togglePaid(${i})" ${q.isPaid?'checked':''}></td><td class="nowrap"><button class="btn-edit" onclick="editQuotation(${i})">កែ</button> <button class="btn-add" onclick="viewPrint(${i})">Print</button> ${delBtn}</td></tr>`; 
+                b.innerHTML += `<tr style="${rs}"><td><span style="color:#007bff; font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')">${escapeHTML(q.quoteNo)}</span> ${ib}</td><td>${q.issueDate||q.date||''}</td><td>${escapeHTML(q.customer)}</td><td style="${dc}">${q.wedDate?formatKhmerDate(q.wedDate):'-'}</td><td style="color:#0056b3;">${escapeHTML(doc)}</td><td>$${(q.grandTotal||0).toFixed(2)}</td><td style="color:green;">$${(q.deposit||0).toFixed(2)}</td><td style="text-align:center;"><input type="checkbox" onchange="togglePaid(${i})" ${q.isPaid?'checked':''}></td><td class="nowrap"><button class="btn-edit" onclick="editQuotation(${i})">កែ</button> <button class="btn-add" onclick="viewPrint(${i})">Print</button> ${delBtn}</td></tr>`; 
             } 
         }
         function searchQuotation() { let k = document.getElementById("searchQuote").value.toLowerCase(); let r = document.getElementById("dbListBody").getElementsByTagName("tr"); for(let i=0; i<r.length; i++) r[i].style.display = r[i].innerText.toLowerCase().includes(k) ? "" : "none"; }
+
+        function generatePendingQuoteReport() { 
+            let fD = document.getElementById("repPendingDateFrom").value; 
+            let tD = document.getElementById("repPendingDateTo").value; 
+            let b = document.getElementById("pendingQuoteReportBody"); 
+            let h = "", c = 0; 
+            quotations.forEach(q => { 
+                let dp = parseFloat(q.deposit)||0; 
+                if(dp<=0) { 
+                    let cd = q.issueDate||q.date; 
+                    if(cd>=fD && cd<=tD) { 
+                        c++; 
+                        let wed = q.wedDate ? formatKhmerDate(q.wedDate) : "-";
+                        h += `<tr><td><span style="color:#007bff; font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')">${escapeHTML(q.quoteNo)}</span></td><td>${cd}</td><td>${escapeHTML(q.customer)}</td><td>${escapeHTML(q.phone)}</td><td style="color:#dc3545; font-weight:bold;">${wed}</td><td style="color:red;">$${(q.grandTotal||0).toFixed(2)}</td></tr>`; 
+                    } 
+                } 
+            }); 
+            b.innerHTML = c===0 ? `<tr><td colspan="6" style="text-align:center;">គ្មានទិន្នន័យ!</td></tr>` : h; 
+        }
+        
+        function generateDeliveryReport() { 
+            let fD = document.getElementById("repDeliveryDateFrom").value; 
+            let tD = document.getElementById("repDeliveryDateTo").value; 
+            let b = document.getElementById("deliveryReportBody"); 
+            let h = "", c = 0; 
+            quotations.forEach(q => { 
+                let dp = parseFloat(q.deposit)||0; 
+                if(dp<=0 || q.isPaid) return; 
+                if(q.delDate1>=fD && q.delDate1<=tD) { 
+                    c++; 
+                    let iL = (q.morningItems||q.items||[]).map(i=>`<li>${escapeHTML(i.name)}: ${i.qty} ${escapeHTML(i.unit)}</li>`).join(""); 
+                    h += `<tr><td><span style="color:#007bff; font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')">${escapeHTML(q.quoteNo)}</span></td><td>${escapeHTML(q.customer)}</td><td style="color:green;">${q.delDate1}</td><td style="color:red;">${escapeHTML(q.delLoc1)} [ព្រឹក]</td><td><ul style="margin:0; padding-left:15px; font-size:12px;">${iL}</ul></td></tr>`; 
+                } 
+                if(q.delDate2>=fD && q.delDate2<=tD) { 
+                    c++; 
+                    let iL = (q.eveningItems||[]).map(i=>`<li>${escapeHTML(i.name)}: ${i.qty} ${escapeHTML(i.unit)}</li>`).join(""); 
+                    h += `<tr><td><span style="color:#007bff; font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')">${escapeHTML(q.quoteNo)}</span></td><td>${escapeHTML(q.customer)}</td><td style="color:green;">${q.delDate2}</td><td style="color:red;">${escapeHTML(q.delLoc2)} [ល្ងាច]</td><td><ul style="margin:0; padding-left:15px; font-size:12px;">${iL}</ul></td></tr>`; 
+                } 
+            }); 
+            b.innerHTML = c===0 ? `<tr><td colspan="5" style="text-align:center;">គ្មានការដឹកជញ្ជូន!</td></tr>` : h; 
+        }
+        
+        function generateBookingReport() { 
+            let fD = document.getElementById("repBookingDateFrom").value; 
+            let tD = document.getElementById("repBookingDateTo").value; 
+            let tI = 0, tDp = 0, tG = 0, h = ""; 
+            quotations.forEach(q => { 
+                let dp = parseFloat(q.deposit)||0; 
+                if(dp<=0 || q.isPaid) return; 
+                let cd = q.issueDate||q.date; 
+                if(cd>=fD && cd<=tD) { 
+                    tI++; tDp+=dp; tG+=parseFloat(q.grandTotal||0); 
+                    
+                    let allItems = [...(q.morningItems||q.items||[]), ...(q.eveningItems||[])];
+                    let itemsHTML = allItems.length > 0 
+                        ? `<ul style="margin:0; padding-left:15px; font-size:13px; text-align:left;">` + allItems.map(i => `<li>${escapeHTML(i.name)}: ${i.qty} ${escapeHTML(i.unit)} (x $${i.price})</li>`).join("") + `</ul>`
+                        : "-";
+
+                    h += `<tr>
+                            <td><span style="color:#007bff; font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')">${escapeHTML(q.quoteNo)}</span></td>
+                            <td>${cd}</td>
+                            <td>${escapeHTML(q.customer)}</td>
+                            <td>$${(q.grandTotal||0).toFixed(2)}</td>
+                            <td style="color:green;">$${dp.toFixed(2)}</td>
+                            <td style="min-width: 220px; white-space: normal; line-height: 1.5;">${itemsHTML}</td>
+                          </tr>`; 
+                } 
+            }); 
+            document.getElementById("repTotalInv").innerText = tI; 
+            document.getElementById("repTotalDeposit").innerText = "$"+tDp.toFixed(2); 
+            document.getElementById("repTotalGrand").innerText = "$"+tG.toFixed(2); 
+            document.getElementById("bookingReportBody").innerHTML = tI>0 ? h : `<tr><td colspan="6" style="text-align:center;">គ្មានទិន្នន័យ!</td></tr>`; 
+        }
 
         function renderOrderTrackingTable() { 
             let b = document.getElementById("orderTrackingBody"); 
@@ -1381,33 +1453,33 @@
                     c++; 
                     let sr = (q.suppliers||[]).map((s, si) => `
                         <tr>
-                            <td style="border:none; border-bottom:1px solid #eee; padding:5px; width:28%;">
+                            <td style="border:none; border-bottom:1px solid #eee; padding:5px; width:25%;">
                                 <input type="text" placeholder="ឈ្មោះក្រុមហ៊ុន..." value="${escapeHTML(s.name||'')}" onchange="updateSupplier(${i}, ${si}, 'name', this.value)" style="width:100%; font-size:13px; padding:6px; border:1px solid #ccc; border-radius:4px;">
                             </td>
-                            <td style="border:none; border-bottom:1px solid #eee; padding:5px; white-space:nowrap; width:12%;">
+                            <td style="border:none; border-bottom:1px solid #eee; padding:5px; white-space:nowrap; width:15%;">
                                 <label style="cursor:pointer; display:flex; align-items:center; gap:5px; font-size:13px;">
-                                    <input type="checkbox" onchange="updateSupplier(${i}, ${si}, 'doc', this.checked)" ${s.doc?'checked':''} style="width:16px; height:16px; margin:0;"> ឯកសារ
+                                    <input type="checkbox" onchange="updateSupplier(${i}, ${si}, 'doc', this.checked)" ${s.doc?'checked':''} style="width:16px; height:16px; margin:0;"> ឯកសារដាក់ទៅក្រុមហ៊ុន
                                 </label>
                             </td>
                             <td style="border:none; border-bottom:1px solid #eee; padding:5px; white-space:nowrap; width:12%;">
                                 <label style="cursor:pointer; display:flex; align-items:center; gap:5px; font-size:13px;">
-                                    <input type="checkbox" onchange="updateSupplier(${i}, ${si}, 'goods', this.checked)" ${s.goods?'checked':''} style="width:16px; height:16px; margin:0;"> ទំនិញ
+                                    <input type="checkbox" onchange="updateSupplier(${i}, ${si}, 'goods', this.checked)" ${s.goods?'checked':''} style="width:16px; height:16px; margin:0;"> ទំនិញថែម
                                 </label>
                             </td>
                             <td style="border:none; border-bottom:1px solid #eee; padding:5px; width:40%;">
-                                <div style="display:flex; align-items:center; gap:5px; background: #f8f9fa; padding:2px 5px; border-radius:4px; border:1px dashed #ccc;">
-                                    <span style="font-size:13px; font-weight:bold; color:#0056b3; white-space:nowrap;">ទំនិញថែម:</span>
-                                    <input type="text" placeholder="វាយបញ្ចូលទីនេះ..." value="${escapeHTML(s.reward||'')}" onchange="updateSupplier(${i}, ${si}, 'reward', this.value)" style="width:100%; font-size:13px; padding:4px; border:none; background:transparent; outline:none;">
+                                <div style="display:flex; flex-direction:column; gap:2px; background: #f8f9fa; padding:4px 5px; border-radius:4px; border:1px dashed #ccc;">
+                                    <span style="font-size:12px; font-weight:bold; color:#0056b3;">បញ្ជាក់មុខទំនិញថែម:</span>
+                                    <textarea placeholder="វាយបញ្ចូលទីនេះ... លោតចុះបន្ទាត់បាន" onchange="updateSupplier(${i}, ${si}, 'reward', this.value)" style="width:100%; font-size:13px; padding:4px; border:1px solid #ddd; background:white; border-radius:3px; outline:none; resize:vertical; min-height: 40px; font-family:'Khmer OS Battambang';">${escapeHTML(s.reward||'')}</textarea>
                                 </div>
                             </td>
-                            <td style="border:none; border-bottom:1px solid #eee; padding:5px; text-align:center; width:8%;">
+                            <td style="border:none; border-bottom:1px solid #eee; padding:5px; text-align:center; width:8%; vertical-align:middle;">
                                 <button class="btn-danger" style="padding:4px 8px;" onclick="removeSupplier(${i}, ${si})" title="លុបក្រុមហ៊ុននេះ">❌</button>
                             </td>
                         </tr>`).join(''); 
                         
                     b.innerHTML += `
                         <tr>
-                            <td style="font-weight:bold; vertical-align: top;"><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color: #007bff;">${escapeHTML(q.quoteNo)}</a></td>
+                            <td style="font-weight:bold; vertical-align: top;"><span style="color:#007bff; font-weight:bold; cursor:pointer; text-decoration:underline;" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')">${escapeHTML(q.quoteNo)}</span></td>
                             <td style="vertical-align: top;"><span style="color:#007bff; font-weight:bold;">${escapeHTML(q.customer)}</span><br><small style="color:#dc3545; font-weight:bold;">ថ្ងៃការ: ${q.wedDate?formatKhmerDate(q.wedDate):'-'}</small></td>
                             <td style="padding: 0;">
                                 <table style="width:100%; border:none; margin:0; background:transparent;"><tbody>${sr}</tbody></table>
@@ -1524,62 +1596,6 @@
             }, 300);
         }
 
-        function generatePendingQuoteReport() { let fD = document.getElementById("repPendingDateFrom").value; let tD = document.getElementById("repPendingDateTo").value; let b = document.getElementById("pendingQuoteReportBody"); let h = "", c = 0; quotations.forEach(q => { let dp = parseFloat(q.deposit)||0; if(dp<=0) { let cd = q.issueDate||q.date; if(cd>=fD && cd<=tD) { c++; h += `<tr><td><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color:#007bff; font-weight:bold;">${escapeHTML(q.quoteNo)}</a></td><td>${cd}</td><td>${escapeHTML(q.customer)}</td><td>${escapeHTML(q.phone)}</td><td style="color:red;">$${(q.grandTotal||0).toFixed(2)}</td></tr>`; } } }); b.innerHTML = c===0 ? `<tr><td colspan="5" style="text-align:center;">គ្មានទិន្នន័យ!</td></tr>` : h; }
-        
-        function generateDeliveryReport() { 
-            let fD = document.getElementById("repDeliveryDateFrom").value; 
-            let tD = document.getElementById("repDeliveryDateTo").value; 
-            let b = document.getElementById("deliveryReportBody"); 
-            let h = "", c = 0; 
-            quotations.forEach(q => { 
-                let dp = parseFloat(q.deposit)||0; 
-                if(dp<=0 || q.isPaid) return; 
-                if(q.delDate1>=fD && q.delDate1<=tD) { 
-                    c++; 
-                    let iL = (q.morningItems||q.items||[]).map(i=>`<li>${escapeHTML(i.name)}: ${i.qty} ${escapeHTML(i.unit)}</li>`).join(""); 
-                    h += `<tr><td><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color:#007bff; font-weight:bold;">${escapeHTML(q.quoteNo)}</a></td><td>${escapeHTML(q.customer)}</td><td style="color:green;">${q.delDate1}</td><td style="color:red;">${escapeHTML(q.delLoc1)} [ព្រឹក]</td><td><ul style="margin:0; padding-left:15px; font-size:12px;">${iL}</ul></td></tr>`; 
-                } 
-                if(q.delDate2>=fD && q.delDate2<=tD) { 
-                    c++; 
-                    let iL = (q.eveningItems||[]).map(i=>`<li>${escapeHTML(i.name)}: ${i.qty} ${escapeHTML(i.unit)}</li>`).join(""); 
-                    h += `<tr><td><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color:#007bff; font-weight:bold;">${escapeHTML(q.quoteNo)}</a></td><td>${escapeHTML(q.customer)}</td><td style="color:green;">${q.delDate2}</td><td style="color:red;">${escapeHTML(q.delLoc2)} [ល្ងាច]</td><td><ul style="margin:0; padding-left:15px; font-size:12px;">${iL}</ul></td></tr>`; 
-                } 
-            }); 
-            b.innerHTML = c===0 ? `<tr><td colspan="5" style="text-align:center;">គ្មានការដឹកជញ្ជូន!</td></tr>` : h; 
-        }
-        
-        function generateBookingReport() { 
-            let fD = document.getElementById("repBookingDateFrom").value; 
-            let tD = document.getElementById("repBookingDateTo").value; 
-            let tI = 0, tDp = 0, tG = 0, h = ""; 
-            quotations.forEach(q => { 
-                let dp = parseFloat(q.deposit)||0; 
-                if(dp<=0 || q.isPaid) return; 
-                let cd = q.issueDate||q.date; 
-                if(cd>=fD && cd<=tD) { 
-                    tI++; tDp+=dp; tG+=parseFloat(q.grandTotal||0); 
-                    
-                    let allItems = [...(q.morningItems||q.items||[]), ...(q.eveningItems||[])];
-                    let itemsHTML = allItems.length > 0 
-                        ? `<ul style="margin:0; padding-left:15px; font-size:13px; text-align:left;">` + allItems.map(i => `<li>${escapeHTML(i.name)}: ${i.qty} ${escapeHTML(i.unit)} (x $${i.price})</li>`).join("") + `</ul>`
-                        : "-";
-
-                    h += `<tr>
-                            <td><a href="javascript:void(0)" onclick="openQuoteForEdit('${escapeHTML(q.quoteNo)}')" style="color:#007bff; font-weight:bold;">${escapeHTML(q.quoteNo)}</a></td>
-                            <td>${cd}</td>
-                            <td>${escapeHTML(q.customer)}</td>
-                            <td>$${(q.grandTotal||0).toFixed(2)}</td>
-                            <td style="color:green;">$${dp.toFixed(2)}</td>
-                            <td>${itemsHTML}</td>
-                          </tr>`; 
-                } 
-            }); 
-            document.getElementById("repTotalInv").innerText = tI; 
-            document.getElementById("repTotalDeposit").innerText = "$"+tDp.toFixed(2); 
-            document.getElementById("repTotalGrand").innerText = "$"+tG.toFixed(2); 
-            document.getElementById("bookingReportBody").innerHTML = tI>0 ? h : `<tr><td colspan="6" style="text-align:center;">គ្មានទិន្នន័យ!</td></tr>`; 
-        }
-        
         function exportToExcel(tId, fn) { let t = document.getElementById(tId); if(t.rows.length<=1) return; let bl = new Blob([`<html xmlns:x="urn:schemas-microsoft-com:office:excel"><meta charset="UTF-8"><body>${t.outerHTML}</body></html>`], {type:'application/vnd.ms-excel'}); let l = document.createElement("a"); l.href = URL.createObjectURL(bl); l.download = fn+".xls"; document.body.appendChild(l); l.click(); addLog("ទាញយករបាយការណ៍", fn); }
         function printReportPDF(tId, rn) { let t = document.getElementById(tId); if(!t) return; let w = window.open('', '', 'height=700,width=900'); w.document.write(`<html><head><style>body{font-family:'Khmer OS Battambang';} table{width:100%; border-collapse:collapse;} th,td{border:1px solid #000; padding:8px;} th{background:#f4f4f4;} h2{text-align:center;}</style></head><body><h2>${escapeHTML(rn)}</h2>${t.outerHTML}</body></html>`); w.document.close(); setTimeout(()=>w.print(), 500); addLog("Print របាយការណ៍", rn); }
 
