@@ -6,6 +6,11 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseapp.com https://*.firebaseio.com https://*.googleapis.com wss://*.firebaseio.com; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.gstatic.com https://code.jquery.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: blob: https:; font-src 'self' data:;">
     <title>Chheangleng Depot System</title>
     
+    <!-- PWA Links (បន្ថែមថ្មី) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#343a40">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
     <!-- Excel Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
@@ -1734,6 +1739,15 @@
                 };
                 reader.readAsText(file);
             }
+        }
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('ដំណើរការ PWA ជោគជ័យ!'))
+                    .catch(err => console.error('បរាជ័យក្នុងការដំណើរការ PWA!', err));
+            });
         }
     </script>
 </body>
