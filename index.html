@@ -619,6 +619,9 @@
         $(document).ready(function() {
             $('.select2').select2({ width: '100%' });
             
+            // លោតថ្ងៃខែ Default ពេលបើកប្រព័ន្ធភ្លាមៗ
+            resetQuoteForm();
+            
             window.addEventListener('afterprint', function() {
                 document.title = "Chheangleng Depot System";
                 showTab(returnTabAfterPrint);
@@ -1280,8 +1283,18 @@
         function resetQuoteForm() { 
             currentEditQuoteIndex = -1; currentMorningItems = []; currentEveningItems = []; 
             document.getElementById("quoteNo").value = "Auto (បង្កើតស្វ័យប្រវត្តិ)"; 
-            let t = new Date().toISOString().split('T')[0]; 
-            document.getElementById("quoteIssueDate").value = t; document.getElementById("quoteDueDate").value = t; 
+            
+            // កំណត់ថ្ងៃបច្ចុប្បន្ន
+            let d = new Date();
+            let t = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+            
+            // កំណត់ថ្ងៃបច្ចុប្បន្ន បូកថែម ៧ថ្ងៃ សម្រាប់ថ្ងៃផុតកំណត់
+            let d7 = new Date();
+            d7.setDate(d7.getDate() + 7);
+            let t7 = d7.getFullYear() + '-' + String(d7.getMonth()+1).padStart(2,'0') + '-' + String(d7.getDate()).padStart(2,'0');
+            
+            document.getElementById("quoteIssueDate").value = t; 
+            document.getElementById("quoteDueDate").value = t7; 
             
             $('#cusName').val(null).trigger('change');
             $('#selectItemM').val(null).trigger('change');
