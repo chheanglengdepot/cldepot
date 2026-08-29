@@ -1640,6 +1640,9 @@
             let printSig = printProf.signature || company.signature || '';
             let printName = printProf.name || company.sellerName || 'នី និមល'; 
             
+            let dep = parseFloat(q.deposit) || 0;
+            let sigImageHTML = (dep > 0 && printSig) ? `<img src="${printSig}" class="sig-img" style="display: block;">` : '';
+            
             h += `<div class="keep-together">
                     <table class="quote-print-table" style="margin-top:0;">
                         <tbody>
@@ -1663,7 +1666,7 @@
                     
                     <div class="signature-section">
                         <div class="sig-box"><p style="margin-bottom:0;">អតិថិជន</p><div class="sig-space"></div><div class="sig-line"></div></div>
-                        <div class="sig-box"><p style="margin-bottom:0;">តំណាងខាងដេប៉ូ</p><div class="sig-space"><img src="${printSig}" class="sig-img" style="display: ${printSig?'block':'none'};"></div><div class="sig-line"></div><span>${escapeHTML(printName)}</span></div>
+                        <div class="sig-box"><p style="margin-bottom:0;">តំណាងខាងដេប៉ូ</p><div class="sig-space">${sigImageHTML}</div><div class="sig-line"></div><span>${escapeHTML(printName)}</span></div>
                     </div>
                 </div>`; 
             
