@@ -362,7 +362,7 @@
                     </div>
                     <div class="table-responsive">
                         <table>
-                            <thead><tr><th>កូដ</th><th>ទំនិញ</th><th>ចំនួន</th><th>ឯកតា</th><th>តម្លៃរាយ</th><th>សរុប</th><th>លុប</th></tr></thead>
+                            <thead><tr><th>កូដ</th><th>ទំនិញ</th><th>ចំនួន</th><th>ឯកតា</th><th>តម្លៃរាយ</th><th>សរុប</th><th>សកម្មភាព</th></tr></thead>
                             <tbody id="morningBody"></tbody>
                         </table>
                     </div>
@@ -384,7 +384,7 @@
                     </div>
                     <div class="table-responsive">
                         <table>
-                            <thead><tr><th>កូដ</th><th>ទំនិញ</th><th>ចំនួន</th><th>ឯកតា</th><th>តម្លៃរាយ</th><th>សរុប</th><th>លុប</th></tr></thead>
+                            <thead><tr><th>កូដ</th><th>ទំនិញ</th><th>ចំនួន</th><th>ឯកតា</th><th>តម្លៃរាយ</th><th>សរុប</th><th>សកម្មភាព</th></tr></thead>
                             <tbody id="eveningBody"></tbody>
                         </table>
                     </div>
@@ -1335,13 +1335,32 @@
 
         function removeQuoteItem(t, i) { if(t==='M') currentMorningItems.splice(i,1); else currentEveningItems.splice(i,1); renderCurrentQuote(); }
         
+        function editQuoteItem(t, i) { 
+            let item = t === 'M' ? currentMorningItems[i] : currentEveningItems[i]; 
+            let sId = t === 'M' ? "selectItemM" : "selectItemE"; 
+            let qId = t === 'M' ? "quoteQtyM" : "quoteQtyE"; 
+            let pId = t === 'M' ? "quotePriceM" : "quotePriceE"; 
+            let uId = t === 'M' ? "quoteUnitM" : "quoteUnitE"; 
+            
+            // Set input values and trigger select2 update
+            $('#' + sId).val(item.code).trigger('change'); 
+            
+            // Ensure actual item price is used instead of default from dropdown trigger
+            document.getElementById(qId).value = item.qty; 
+            document.getElementById(pId).value = item.price; 
+            document.getElementById(uId).value = item.unit; 
+            
+            // Remove from list so user can re-add after modification
+            removeQuoteItem(t, i); 
+        }
+
         function renderCurrentQuote() { 
             let mS = 0; 
-            document.getElementById("morningBody").innerHTML = currentMorningItems.map((q,i) => { mS+=q.total; return `<tr><td>${escapeHTML(q.code)}</td><td>${escapeHTML(q.name)}</td><td>${q.qty}</td><td>${escapeHTML(q.unit)}</td><td>$${q.price}</td><td>$${q.total}</td><td><button class="btn-danger" onclick="removeQuoteItem('M',${i})">❌</button></td></tr>`; }).join(''); 
+            document.getElementById("morningBody").innerHTML = currentMorningItems.map((q,i) => { mS+=q.total; return `<tr><td>${escapeHTML(q.code)}</td><td>${escapeHTML(q.name)}</td><td>${q.qty}</td><td>${escapeHTML(q.unit)}</td><td>$${q.price}</td><td>$${q.total}</td><td class="nowrap"><button class="btn-edit" onclick="editQuoteItem('M',${i})">កែ</button> <button class="btn-danger" onclick="removeQuoteItem('M',${i})">❌</button></td></tr>`; }).join(''); 
             document.getElementById("quoteSubMorning").innerText = mS.toFixed(2); 
             
             let eS = 0; 
-            document.getElementById("eveningBody").innerHTML = currentEveningItems.map((q,i) => { eS+=q.total; return `<tr><td>${escapeHTML(q.code)}</td><td>${escapeHTML(q.name)}</td><td>${q.qty}</td><td>${escapeHTML(q.unit)}</td><td>$${q.price}</td><td>$${q.total}</td><td><button class="btn-danger" onclick="removeQuoteItem('E',${i})">❌</button></td></tr>`; }).join(''); 
+            document.getElementById("eveningBody").innerHTML = currentEveningItems.map((q,i) => { eS+=q.total; return `<tr><td>${escapeHTML(q.code)}</td><td>${escapeHTML(q.name)}</td><td>${q.qty}</td><td>${escapeHTML(q.unit)}</td><td>$${q.price}</td><td>$${q.total}</td><td class="nowrap"><button class="btn-edit" onclick="editQuoteItem('E',${i})">កែ</button> <button class="btn-danger" onclick="removeQuoteItem('E',${i})">❌</button></td></tr>`; }).join(''); 
             document.getElementById("quoteSubEvening").innerText = eS.toFixed(2); 
             
             document.getElementById("quoteGrandTotal").innerText = (mS+eS).toFixed(2); 
@@ -1625,7 +1644,7 @@
                     <table class="quote-print-table" style="margin-top:0;">
                         <tbody>
                             <tr class="bg-grey">
-                                <td rowspan="3" colspan="4" style="width: 55%; text-align:left; vertical-align:top; background-color:white !important; font-weight:normal; font-size:11px;">
+                                <td rowspan="3" colspan="4" style="width: 55%; text-align:left; vertical-align:top; background-color:#e9ecef !important; font-weight:bold; font-size:11px;">
                                     <strong><u>ចំណាំ/ថែមជូន:</u></strong><br>${nT}
                                 </td>
                                 <td colspan="2" style="width: 30%; text-align:right;">សរុបការចំណាយនៅហាង:</td>
