@@ -2,7 +2,7 @@
   "name": "Chheangleng Depot System",
   "short_name": "CL Depot",
   "start_url": "./index.html",
-  "display": "standalone",
+  "display": "browser",
   "background_color": "#f4f6f9",
   "theme_color": "#343a40",
   "icons": [
