@@ -622,37 +622,11 @@
             // លោតថ្ងៃខែ Default ពេលបើកប្រព័ន្ធភ្លាមៗ
             resetQuoteForm();
             
+            // កំណត់ឈ្មោះទំព័រដើមវិញក្រោយពេល Print រួច ដោយមិនបង្ខំបិទផ្ទាំង Print លើទូរស័ព្ទ
             window.addEventListener('afterprint', function() {
                 document.title = "Chheangleng Depot System";
-                showTab(returnTabAfterPrint);
                 isMobilePrinting = false;
             });
-
-            window.addEventListener('focus', function() {
-                if (isMobilePrinting) {
-                    setTimeout(function() {
-                        document.title = "Chheangleng Depot System";
-                        showTab(returnTabAfterPrint);
-                        isMobilePrinting = false;
-                    }, 500);
-                }
-            });
-
-            if (window.matchMedia) {
-                let mediaQueryList = window.matchMedia('print');
-                let printEndHandler = function(mql) {
-                    if (!mql.matches) {
-                        document.title = "Chheangleng Depot System";
-                        showTab(returnTabAfterPrint);
-                        isMobilePrinting = false;
-                    }
-                };
-                if (mediaQueryList.addEventListener) {
-                    mediaQueryList.addEventListener('change', printEndHandler);
-                } else {
-                    mediaQueryList.addListener(printEndHandler);
-                }
-            }
         });
 
         const firebaseConfig = {
@@ -1692,20 +1666,12 @@
             
             setTimeout(function() {
                 window.print();
-                setTimeout(function() {
-                    if (isMobilePrinting) {
-                        document.title = "Chheangleng Depot System";
-                        showTab(returnTabAfterPrint);
-                        isMobilePrinting = false;
-                    }
-                }, 1500);
             }, 300);
             
             addLog("Print របាយការណ៍", rn); 
         }
 
         function mobilePrint() {
-            let originalTitle = "Chheangleng Depot System";
             let invNo = document.getElementById("pr_invNo").innerText || "Invoice";
             
             // កំណត់ឈ្មោះ File ទៅតាមប្រភេទការ Print (របាយការណ៍ ឬ វិក្កយបត្រ)
@@ -1714,17 +1680,7 @@
             document.title = printName; 
             isMobilePrinting = true;
 
-            setTimeout(function() {
-                window.print();
-                
-                setTimeout(function() {
-                    if (isMobilePrinting) {
-                        document.title = originalTitle;
-                        showTab(returnTabAfterPrint);
-                        isMobilePrinting = false;
-                    }
-                }, 1500);
-            }, 300);
+            window.print();
         }
 
         function exportToExcel(tId, fn) { let t = document.getElementById(tId); if(t.rows.length<=1) return; let bl = new Blob([`<html xmlns:x="urn:schemas-microsoft-com:office:excel"><meta charset="UTF-8"><body>${t.outerHTML}</body></html>`], {type:'application/vnd.ms-excel'}); let l = document.createElement("a"); l.href = URL.createObjectURL(bl); l.download = fn+".xls"; document.body.appendChild(l); l.click(); addLog("ទាញយករបាយការណ៍", fn); }

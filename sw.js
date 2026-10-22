@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chheangleng-pwa-v5';
+const CACHE_NAME = 'chheangleng-pwa-v6';
 const urlsToCache = [
   './',
   './index.html',
